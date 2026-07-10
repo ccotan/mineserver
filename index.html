@@ -19,7 +19,10 @@
       <a href="howto.html">Как играть</a>
       <a href="contacts.html">Контакты</a>
     </nav>
-    <a href="howto.html" class="nav-cta">Начать игру</a>
+    <div class="nav-right">
+      <button class="nav-cta" id="authBtn" onclick="openAuth()">Войти</button>
+      <div class="user-badge" id="userBadge" style="display:none"></div>
+    </div>
   </div>
 </header>
 
@@ -46,21 +49,25 @@
     </div>
     <div class="grid-4">
       <div class="card">
+        <img class="card-image" src="https://images.unsplash.com/photo-1607892379516-7c1a7eb4a4a8?w=600" alt="">
         <div class="card-icon">⚡</div>
         <h3>Производительность</h3>
         <p>Стабильные 20 TPS даже при большом онлайне.</p>
       </div>
       <div class="card">
+        <img class="card-image" src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600" alt="">
         <div class="card-icon">🛡️</div>
         <h3>Защита</h3>
         <p>Приват территорий и модераторы 24/7.</p>
       </div>
       <div class="card">
+        <img class="card-image" src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=600" alt="">
         <div class="card-icon">🎮</div>
         <h3>Режимы</h3>
         <p>Выживание, SkyBlock, анархия и мини-игры.</p>
       </div>
       <div class="card">
+        <img class="card-image" src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600" alt="">
         <div class="card-icon">💬</div>
         <h3>Сообщество</h3>
         <p>Активный Discord и еженедельные ивенты.</p>
@@ -73,9 +80,29 @@
   <div class="container">
     <div class="stats">
       <div><div class="stat-num">128</div><div class="stat-label">Онлайн</div></div>
-      <div><div class="stat-num">12 400+</div><div class="stat-label">Игроков</div></div>
-      <div><div class="stat-num">99.8%</div><div class="stat-label">Аптайм</div></div>
-      <div><div class="stat-num">2 года</div><div class="stat-label">Работаем</div></div>
+      <div><div class="stat-num">12400</div><div class="stat-label">Игроков</div></div>
+      <div><div class="stat-num">99</div><div class="stat-label">% Аптайм</div></div>
+      <div><div class="stat-num">2</div><div class="stat-label">Года работы</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-title">
+      <h2>Скриншоты с сервера</h2>
+      <p>Загляни в мир MineServer</p>
+    </div>
+    <div class="grid-3">
+      <div class="card" style="padding:0; overflow:hidden">
+        <img class="card-image" style="margin:0; height:220px; border-radius:0" src="https://images.unsplash.com/photo-1587573089734-599a5787a2c6?w=800" alt="">
+      </div>
+      <div class="card" style="padding:0; overflow:hidden">
+        <img class="card-image" style="margin:0; height:220px; border-radius:0" src="https://images.unsplash.com/photo-1587573089734-599a5787a2c6?w=800&sat=-100" alt="">
+      </div>
+      <div class="card" style="padding:0; overflow:hidden">
+        <img class="card-image" style="margin:0; height:220px; border-radius:0" src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=800" alt="">
+      </div>
     </div>
   </div>
 </section>
@@ -90,6 +117,49 @@
     </div>
   </div>
 </footer>
+
+<!-- Модалка авторизации -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAuth()">✕</button>
+    <h2>Добро пожаловать</h2>
+    <p>Войди или зарегистрируйся, чтобы участвовать в жизни сервера</p>
+    <div class="modal-tabs">
+      <div class="modal-tab active" data-tab="login" onclick="switchTab('login')">Вход</div>
+      <div class="modal-tab" data-tab="register" onclick="switchTab('register')">Регистрация</div>
+    </div>
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label>Никнейм</label>
+        <input type="text" id="loginNick" required>
+      </div>
+      <div class="form-group">
+        <label>Пароль</label>
+        <input type="password" id="loginPass" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%">Войти</button>
+      <div class="form-message" id="loginMsg"></div>
+    </form>
+    <form id="registerForm" style="display:none" onsubmit="handleRegister(event)">
+      <div class="form-group">
+        <label>Никнейм (мин. 3 символа)</label>
+        <input type="text" id="regNick" required>
+      </div>
+      <div class="form-group">
+        <label>Пароль (мин. 4 символа)</label>
+        <input type="password" id="regPass" required>
+      </div>
+      <div class="form-group">
+        <label>Повторите пароль</label>
+        <input type="password" id="regConfirm" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%">Создать аккаунт</button>
+      <div class="form-message" id="regMsg"></div>
+    </form>
+  </div>
+</div>
+
+<button class="scroll-top" title="Наверх">↑</button>
 
 <script src="script.js"></script>
 </body>
