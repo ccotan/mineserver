@@ -19,14 +19,17 @@
       <a href="howto.html">Как играть</a>
       <a href="contacts.html">Контакты</a>
     </nav>
-    <a href="howto.html" class="nav-cta">Начать игру</a>
+    <div class="nav-right">
+      <button class="nav-cta" id="authBtn" onclick="openAuth()">Войти</button>
+      <div class="user-badge" id="userBadge" style="display:none"></div>
+    </div>
   </div>
 </header>
 
 <section class="hero">
   <div class="container">
     <h1>Правила <span>сервера</span></h1>
-    <p>Пожалуйста, ознакомьтесь с правилами перед началом игры. Незнание не освобождает от ответственности.</p>
+    <p>Ознакомьтесь с правилами перед началом игры</p>
   </div>
 </section>
 
@@ -37,108 +40,5 @@
       <p>Действуют на всех режимах сервера</p>
     </div>
     <div class="rules-list">
-      <div class="rule-item">
-        <div class="rule-num">1</div>
-        <div>
-          <h3>Уважай других игроков</h3>
-          <p>Запрещены оскорбления, угрозы, дискриминация и токсичное поведение в чате и голосовом общении.</p>
-        </div>
-      </div>
-      <div class="rule-item">
-        <div class="rule-num">2</div>
-        <div>
-          <h3>Запрещены читы и моды</h3>
-          <p>Использование читов, X-Ray, kill-ауры, авто-кликеров и других запрещённых модификаций ведёт к перманентному бану.</p>
-        </div>
-      </div>
-      <div class="rule-item">
-        <div class="rule-num">3</div>
-        <div>
-          <h3>Никакого гриферства</h3>
-          <p>Разрушение или изменение чужих построек без разрешения запрещено на всех режимах, кроме Анархии.</p>
-        </div>
-      </div>
-      <div class="rule-item">
-        <div class="rule-num">4</div>
-        <div>
-          <h3>Запрет на спам и рекламу</h3>
-          <p>Спам в чате, реклама сторонних серверов и ресурсов запрещена. Повторное нарушение — бан.</p>
-        </div>
-      </div>
-      <div class="rule-item">
-        <div class="rule-num">5</div>
-        <div>
-          <h3>Один аккаунт — один игрок</h3>
-          <p>Мультиаккаунты для обхода банов или получения преимуществ запрещены.</p>
-        </div>
-      </div>
-      <div class="rule-item">
-        <div class="rule-num">6</div>
-        <div>
-          <h3>Запрет на реальные деньги</h3>
-          <p>Торговля игровыми ценностями, аккаунтами или услугами за реальные деньги вне официального магазина запрещена.</p>
-        </div>
-      </div>
-      <div class="rule-item">
-        <div class="rule-num">7</div>
-        <div>
-          <h3>Использование багов</h3>
-          <p>Обнаруженные баги нужно сообщать администрации. Использование багов в свою пользу карается баном.</p>
-        </div>
-      </div>
-      <div class="rule-item">
-        <div class="rule-num">8</div>
-        <div>
-          <h3>Решения администрации — окончательны</h3>
-          <p>Администрация имеет право наказывать за действия, не описанные в правилах, если они вредят серверу.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="container">
-    <div class="section-title">
-      <h2>Наказания</h2>
-      <p>Шкала наказаний за нарушения</p>
-    </div>
-    <div class="grid-4">
-      <div class="card">
-        <div class="card-icon">⚠️</div>
-        <h3>Предупреждение</h3>
-        <p>За мелкие нарушения. После 3 предупреждений — мут.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">🔇</div>
-        <h3>Мут</h3>
-        <p>От 30 минут до 7 дней за спам и оскорбления.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">⏸️</div>
-        <h3>Временный бан</h3>
-        <p>От 1 дня до 30 дней за серьёзные нарушения.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">🚫</div>
-        <h3>Перманентный бан</h3>
-        <p>За читы, обход банов и грубые нарушения.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <div class="container footer-row">
-    <div>© 2026 MineServer. Не связан с Mojang AB.</div>
-    <div class="footer-links">
-      <a href="rules.html">Правила</a>
-      <a href="donate.html">Донат</a>
-      <a href="contacts.html">Discord</a>
-    </div>
-  </div>
-</footer>
-
-<script src="script.js"></script>
-</body>
-</html>
+      <div class="rule-item"><div class="rule-num">1</div><div><h3>Уважай других игроков</h3><p>Запрещены оскорбления, угрозы, дискриминация и токсичное поведение.</p></div></div>
+      <div class="rule-item"><div class="rule-num">2</div><div><h3>Запрещены читы и моды</h3><p>X-Ray, kill-ау
