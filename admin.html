@@ -36,7 +36,7 @@
   <div class="container">
     <div class="admin-tabs">
       <div class="admin-tab active" data-tab="support" onclick="switchAdminTab('support')">💬 Чат поддержки</div>
-      <div class="admin-tab" data-tab="users" onclick="switchAdminTab('users')">👥 Игроки</div>
+      <div class="admin-tab" data-tab="users" onclick="switchAdminTab('users')"> Игроки</div>
       <div class="admin-tab" data-tab="passwords" onclick="switchAdminTab('passwords')">🔐 Смена паролей</div>
     </div>
 
@@ -46,7 +46,10 @@
           <div class="support-empty">Нет обращений</div>
         </div>
         <div class="support-chat" id="supportChat">
-          <div class="support-chat-header" id="chatHeader">Выберите обращение</div>
+          <div class="support-chat-header" id="chatHeader">
+            <span>Выберите обращение</span>
+            <button class="btn btn-secondary" id="closeChatBtn" style="display:none; padding:6px 12px; font-size:12px;" onclick="closeSupportChat()">️ Закрыть чат</button>
+          </div>
           <div class="support-messages" id="chatMessages">
             <div class="support-empty">Выберите чат слева</div>
           </div>
@@ -93,13 +96,17 @@
         <div class="form-group">
           <label>Новый пароль</label>
           <div style="display:flex; gap:8px; align-items:center">
-            <input type="text" id="newPassword" placeholder="Введите новый пароль" style="flex:1">
+            <input type="text" id="newPassword" placeholder="Введите новый пароль" style="flex:1" autocomplete="off">
             <button type="button" class="btn btn-secondary" onclick="generatePassword()">🎲 Сгенерировать</button>
+            <button type="button" class="btn btn-secondary" onclick="copyPassword('newPassword')"></button>
           </div>
         </div>
         <div class="form-group">
           <label>Подтвердите новый пароль</label>
-          <input type="text" id="confirmNewPassword" placeholder="Повторите пароль">
+          <div style="display:flex; gap:8px; align-items:center">
+            <input type="text" id="confirmNewPassword" placeholder="Повторите пароль" autocomplete="off">
+            <button type="button" class="btn btn-secondary" onclick="copyPassword('confirmNewPassword')"></button>
+          </div>
         </div>
         <div class="warning-box">
           ⚠️ Текущий пароль игрока <b>никогда не отображается</b>. После смены старый пароль будет утерян безвозвратно.
@@ -181,7 +188,10 @@ function openChat(chatId) {
     if (!doc.exists) return;
     const chat = doc.data();
     
-    document.getElementById('chatHeader').innerHTML = `💬 Обращение от <b>${escapeHtml(chat.user)}</b>`;
+    document.getElementById('chatHeader').innerHTML = `
+      <span>💬 Обращение от <b>${escapeHtml(chat.user)}</b></span>
+      <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="closeSupportChat()">🗑️ Закрыть чат</button>
+    `;
     document.getElementById('replyForm').style.display = 'flex';
     renderMessages(chat.messages || []);
     
@@ -197,11 +207,30 @@ function openChat(chatId) {
   playClick();
 }
 
+async function closeSupportChat() {
+  if (!currentChatId) return;
+  if (!confirm('Удалить этот чат поддержки?')) return;
+  
+  try {
+    await db.collection('support').doc(currentChatId).delete();
+    currentChatId = null;
+    document.getElementById('chatHeader').innerHTML = '<span>Выберите обращение</span>';
+    document.getElementById('chatMessages').innerHTML = '<div class="support-empty">Выберите чат слева</div>';
+    document.getElementById('replyForm').style.display = 'none';
+    playSuccess();
+    showToast('Чат закрыт');
+    listenToSupportList();
+  } catch(e) {
+    console.error('Close chat error:', e);
+    showToast('Ошибка закрытия чата');
+  }
+}
+
 function renderMessages(messages) {
   const box = document.getElementById('chatMessages');
   box.innerHTML = messages.map(m => `
     <div class="msg ${m.from === 'admin' ? 'msg-admin' : 'msg-user'}">
-      <div class="msg-author">${m.from === 'admin' ? '🛡️ Админ' : '👤 ' + escapeHtml(m.from)}</div>
+      <div class="msg-author">${m.from === 'admin' ? '🛡️ Админ' : ' ' + escapeHtml(m.from)}</div>
       <div class="msg-text">${escapeHtml(m.text)}</div>
       <div class="msg-time">${formatTime(m.time)}</div>
     </div>
@@ -252,7 +281,7 @@ async function loadUsersTable() {
     
     tbody.innerHTML = users.map(user => {
       const count = chats.filter(c => c.user === user.id).length;
-      const role = user.id === 'admin' ? '👑 Админ' : '👤 Игрок';
+      const role = user.id === 'admin' ? ' Админ' : '👤 Игрок';
       return `
         <tr>
           <td><b>${escapeHtml(user.id)}</b></td>
@@ -302,6 +331,15 @@ function generatePassword() {
   document.getElementById('newPassword').value = pass;
   document.getElementById('confirmNewPassword').value = pass;
   playClick();
+}
+
+function copyPassword(fieldId) {
+  const field = document.getElementById(fieldId);
+  if (field.value) {
+    navigator.clipboard.writeText(field.value);
+    showToast('Пароль скопирован');
+    playSuccess();
+  }
 }
 
 async function resetPassword() {
