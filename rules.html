@@ -41,4 +41,69 @@
     </div>
     <div class="rules-list">
       <div class="rule-item"><div class="rule-num">1</div><div><h3>Уважай других игроков</h3><p>Запрещены оскорбления, угрозы, дискриминация и токсичное поведение.</p></div></div>
-      <div class="rule-item"><div class="rule-num">2</div><div><h3>Запрещены читы и моды</h3><p>X-Ray, kill-ау
+      <div class="rule-item"><div class="rule-num">2</div><div><h3>Запрещены читы и моды</h3><p>X-Ray, kill-аура, авто-кликеры и другие запрещённые модификации ведут к бану.</p></div></div>
+      <div class="rule-item"><div class="rule-num">3</div><div><h3>Никакого гриферства</h3><p>Разрушение чужих построек запрещено на всех режимах, кроме Анархии.</p></div></div>
+      <div class="rule-item"><div class="rule-num">4</div><div><h3>Запрет на спам и рекламу</h3><p>Спам в чате и реклама сторонних серверов запрещена.</p></div></div>
+      <div class="rule-item"><div class="rule-num">5</div><div><h3>Один аккаунт — один игрок</h3><p>Мультиаккаунты для обхода банов запрещены.</p></div></div>
+      <div class="rule-item"><div class="rule-num">6</div><div><h3>Запрет на реальные деньги</h3><p>Торговля игровыми ценностями за реальные деньги вне магазина запрещена.</p></div></div>
+      <div class="rule-item"><div class="rule-num">7</div><div><h3>Использование багов</h3><p>Баги нужно сообщать администрации. Использование карается баном.</p></div></div>
+      <div class="rule-item"><div class="rule-num">8</div><div><h3>Решения администрации</h3><p>Администрация имеет право наказывать за действия, вредящие серверу.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-title">
+      <h2>Наказания</h2>
+      <p>Шкала наказаний за нарушения</p>
+    </div>
+    <div class="grid-4">
+      <div class="card"><div class="card-icon">⚠️</div><h3>Предупреждение</h3><p>За мелкие нарушения. После 3 предупреждений — мут.</p></div>
+      <div class="card"><div class="card-icon">🔇</div><h3>Мут</h3><p>От 30 минут до 7 дней за спам и оскорбления.</p></div>
+      <div class="card"><div class="card-icon">⏸️</div><h3>Временный бан</h3><p>От 1 дня до 30 дней за серьёзные нарушения.</p></div>
+      <div class="card"><div class="card-icon">🚫</div><h3>Перманентный бан</h3><p>За читы, обход банов и грубые нарушения.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container footer-row">
+    <div>© 2026 MineServer. Не связан с Mojang AB.</div>
+    <div class="footer-links">
+      <a href="rules.html">Правила</a>
+      <a href="donate.html">Донат</a>
+      <a href="contacts.html">Discord</a>
+    </div>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAuth()">✕</button>
+    <h2>Добро пожаловать</h2>
+    <p>Войди или зарегистрируйся</p>
+    <div class="modal-tabs">
+      <div class="modal-tab active" data-tab="login" onclick="switchTab('login')">Вход</div>
+      <div class="modal-tab" data-tab="register" onclick="switchTab('register')">Регистрация</div>
+    </div>
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group"><label>Никнейм</label><input type="text" id="loginNick" required></div>
+      <div class="form-group"><label>Пароль</label><input type="password" id="loginPass" required></div>
+      <button type="submit" class="btn btn-primary" style="width:100%">Войти</button>
+      <div class="form-message" id="loginMsg"></div>
+    </form>
+    <form id="registerForm" style="display:none" onsubmit="handleRegister(event)">
+      <div class="form-group"><label>Никнейм</label><input type="text" id="regNick" required></div>
+      <div class="form-group"><label>Пароль</label><input type="password" id="regPass" required></div>
+      <div class="form-group"><label>Повторите пароль</label><input type="password" id="regConfirm" required></div>
+      <button type="submit" class="btn btn-primary" style="width:100%">Создать аккаунт</button>
+      <div class="form-message" id="regMsg"></div>
+    </form>
+  </div>
+</div>
+
+<button class="scroll-top" title="Наверх">↑</button>
+<script src="script.js"></script>
+</body>
+</html>
