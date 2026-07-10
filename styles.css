@@ -320,3 +320,149 @@ footer { border-top: 1px solid var(--border); padding: 40px 0 30px; color: var(-
   section { padding: 50px 0; }
   .tier.featured { transform: none; }
 }
+/* ===== АДМИН-ПАНЕЛЬ ===== */
+.admin-tabs {
+  display: flex; gap: 8px; margin-bottom: 30px;
+  background: var(--card); border: 1px solid var(--border);
+  padding: 8px; border-radius: 12px; flex-wrap: wrap;
+}
+.admin-tab {
+  flex: 1; min-width: 160px; padding: 12px 16px; text-align: center;
+  background: transparent; border-radius: 8px; cursor: pointer;
+  font-size: 14px; font-weight: 500; color: var(--muted);
+  transition: all .2s;
+}
+.admin-tab:hover { color: var(--text); background: var(--bg-2); }
+.admin-tab.active { background: var(--accent); color: white; }
+
+/* Чат поддержки */
+.support-layout {
+  display: grid; grid-template-columns: 320px 1fr; gap: 20px;
+  min-height: 500px;
+}
+.support-list {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 12px; overflow-y: auto; max-height: 600px;
+}
+.support-item {
+  padding: 14px; border-radius: 10px; cursor: pointer;
+  transition: all .2s; border: 1px solid transparent; margin-bottom: 6px;
+}
+.support-item:hover { background: var(--bg-2); }
+.support-item.active { background: var(--bg-2); border-color: var(--accent); }
+.support-item-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.support-badge {
+  background: var(--accent); color: white; font-size: 11px;
+  padding: 2px 8px; border-radius: 999px; font-weight: 600;
+}
+.support-item-preview { color: var(--muted); font-size: 13px; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.support-item-time { color: var(--muted); font-size: 11px; }
+.support-empty { text-align: center; color: var(--muted); padding: 40px 20px; font-size: 14px; }
+
+.support-chat {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; display: flex; flex-direction: column; overflow: hidden;
+}
+.support-chat-header {
+  padding: 18px 24px; border-bottom: 1px solid var(--border);
+  font-size: 15px; font-weight: 500;
+}
+.support-messages {
+  flex: 1; padding: 20px; overflow-y: auto; max-height: 450px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.msg {
+  max-width: 75%; padding: 12px 16px; border-radius: 14px;
+  background: var(--bg-2); border: 1px solid var(--border);
+}
+.msg-user { align-self: flex-start; border-bottom-left-radius: 4px; }
+.msg-admin { align-self: flex-end; background: rgba(124,92,255,0.15); border-color: var(--accent); border-bottom-right-radius: 4px; }
+.msg-author { font-size: 12px; color: var(--muted); margin-bottom: 4px; font-weight: 500; }
+.msg-text { font-size: 14px; line-height: 1.5; word-wrap: break-word; }
+.msg-time { font-size: 11px; color: var(--muted); margin-top: 4px; text-align: right; }
+
+.support-reply {
+  display: flex; gap: 8px; padding: 16px;
+  border-top: 1px solid var(--border);
+}
+.support-reply input {
+  flex: 1; padding: 10px 14px;
+  background: var(--bg-2); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text); font-size: 14px;
+}
+.support-reply input:focus { outline: none; border-color: var(--accent); }
+
+/* Таблица пользователей */
+.users-table-wrap { overflow-x: auto; }
+.users-table {
+  width: 100%; border-collapse: collapse;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+}
+.users-table th, .users-table td {
+  padding: 14px 18px; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.users-table th {
+  background: var(--bg-2); color: var(--muted);
+  font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.users-table tr:last-child td { border-bottom: none; }
+.users-table tr:hover td { background: var(--bg-2); }
+
+/* Сброс пароля */
+.password-reset-card {
+  background: var(--card); border: 1px solid var(--border);
+  padding: 30px; border-radius: 16px; max-width: 600px; margin: 0 auto;
+}
+.form-select {
+  width: 100%; padding: 12px 14px;
+  background: var(--bg-2); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text); font-size: 14px;
+  cursor: pointer;
+}
+.form-select:focus { outline: none; border-color: var(--accent); }
+.warning-box {
+  background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3);
+  color: #fbbf24; padding: 12px 16px; border-radius: 8px;
+  font-size: 13px; margin: 16px 0;
+}
+
+/* Кнопка поддержки */
+.support-fab {
+  position: fixed; bottom: 30px; left: 30px;
+  background: var(--accent); color: white;
+  width: 56px; height: 56px; border-radius: 50%;
+  border: none; cursor: pointer; font-size: 24px;
+  box-shadow: 0 8px 24px rgba(124,92,255,0.4);
+  z-index: 99; transition: all .3s;
+  display: flex; align-items: center; justify-content: center;
+}
+.support-fab:hover { transform: scale(1.1); }
+.support-fab .fab-badge {
+  position: absolute; top: -4px; right: -4px;
+  background: #ef4444; color: white; font-size: 11px;
+  min-width: 20px; height: 20px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 6px; font-weight: 600;
+}
+
+/* Модалка поддержки для игрока */
+.support-modal-content { max-width: 500px; }
+.support-player-messages {
+  max-height: 350px; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 10px;
+  margin-bottom: 16px; padding: 4px;
+}
+.support-player-form { display: flex; gap: 8px; }
+.support-player-form input {
+  flex: 1; padding: 10px 14px;
+  background: var(--bg-2); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text); font-size: 14px;
+}
+.support-player-form input:focus { outline: none; border-color: var(--accent); }
+
+@media (max-width: 768px) {
+  .support-layout { grid-template-columns: 1fr; }
+  .support-list { max-height: 250px; }
+}
