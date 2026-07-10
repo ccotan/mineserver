@@ -1,4 +1,20 @@
-// ===== ЗВУКИ (мягкие и приятные) =====
+// ===== FIREBASE КОНФИГУРАЦИЯ (твои данные) =====
+const firebaseConfig = {
+  apiKey: "AIzaSyBX496oLlIFMD36SvyOl5zczX8d3vbvWEU",
+  authDomain: "mineserver-bb0c6.firebaseapp.com",
+  databaseURL: "https://mineserver-bb0c6-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "mineserver-bb0c6",
+  storageBucket: "mineserver-bb0c6.firebasestorage.app",
+  messagingSenderId: "630624618107",
+  appId: "1:630624618107:web:4b2fdc9f2b7aaed44a44de",
+  measurementId: "G-TEVM88WW3P"
+};
+
+// Инициализация Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// ===== ЗВУКИ (очень тихие) =====
 let audioCtx;
 function playClick() {
   try {
@@ -18,7 +34,7 @@ function playClick() {
     osc.frequency.setValueAtTime(300, audioCtx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.08);
     
-    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
     
     osc.start();
@@ -44,7 +60,7 @@ function playSuccess() {
       osc.frequency.value = freq;
       
       const t = audioCtx.currentTime + i * 0.1;
-      gain.gain.setValueAtTime(0.06, t);
+      gain.gain.setValueAtTime(0.02, t);
       gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
       
       osc.start(t);
@@ -105,51 +121,19 @@ function showToast(msg) {
   toast._t = setTimeout(() => toast.classList.remove('show'), 2000);
 }
 
-// ===== СИНХРОНИЗАЦИЯ МЕЖДУ ВКЛАДКАМИ =====
-const channel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('mineserver_sync') : null;
-
-function broadcastUpdate(type, data) {
-  if (channel) {
-    channel.postMessage({ type, data });
-  }
-  // Также обновляем timestamp для storage event
-  localStorage.setItem('ms_lastUpdate', Date.now().toString());
-}
-
-if (channel) {
-  channel.onmessage = (event) => {
-    const { type, data } = event.data;
-    if (type === 'support') {
-      if (document.getElementById('supportModal')?.classList.contains('active')) {
-        loadPlayerChat();
-      }
-      updateSupportFab();
+// ===== FIREBASE: АВТО-СОЗДАНИЕ АДМИНА =====
+async function ensureAdmin() {
+  try {
+    const adminDoc = await db.collection('users').doc('admin').get();
+    if (!adminDoc.exists) {
+      await db.collection('users').doc('admin').set({
+        password: 'admin123',
+        role: 'admin',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
     }
-    if (type === 'users') {
-      updateUserUI();
-    }
-  };
-}
-
-// Слушаем изменения localStorage
-window.addEventListener('storage', (e) => {
-  if (e.key === 'ms_support') {
-    if (document.getElementById('supportModal')?.classList.contains('active')) {
-      loadPlayerChat();
-    }
-    updateSupportFab();
-  }
-  if (e.key === 'ms_users' || e.key === 'ms_current') {
-    updateUserUI();
-  }
-});
-
-// ===== АВТО-СОЗДАНИЕ АДМИНА =====
-function ensureAdmin() {
-  const users = JSON.parse(localStorage.getItem('ms_users') || '{}');
-  if (!users.admin) {
-    users.admin = 'admin123';
-    localStorage.setItem('ms_users', JSON.stringify(users));
+  } catch(e) {
+    console.error('Error creating admin:', e);
   }
 }
 
@@ -180,47 +164,45 @@ function switchTab(tab) {
   playClick();
 }
 
-function handleLogin(e) {
+async function handleLogin(e) {
   e.preventDefault();
   const nickname = document.getElementById('loginNick').value.trim();
   const password = document.getElementById('loginPass').value;
-  const users = JSON.parse(localStorage.getItem('ms_users') || '{}');
   
-  if (!users[nickname]) {
-    showFormMsg('loginMsg', 'Пользователь не найден', 'error');
-    return;
-  }
-  if (users[nickname] !== password) {
-    showFormMsg('loginMsg', 'Неверный пароль', 'error');
-    return;
-  }
-  
-  localStorage.setItem('ms_current', nickname);
-  broadcastUpdate('users', { action: 'login', user: nickname });
-  playSuccess();
-  updateUserUI();
-  closeAuth();
-  showToast('Добро пожаловать, ' + nickname + '!');
-  
-  if (nickname === 'admin') {
-    setTimeout(() => window.location.href = 'admin.html', 800);
+  try {
+    const userDoc = await db.collection('users').doc(nickname).get();
+    
+    if (!userDoc.exists) {
+      showFormMsg('loginMsg', 'Пользователь не найден', 'error');
+      return;
+    }
+    
+    const userData = userDoc.data();
+    if (userData.password !== password) {
+      showFormMsg('loginMsg', 'Неверный пароль', 'error');
+      return;
+    }
+    
+    localStorage.setItem('ms_current', nickname);
+    playSuccess();
+    updateUserUI();
+    closeAuth();
+    showToast('Добро пожаловать, ' + nickname + '!');
+    
+    if (nickname === 'admin') {
+      setTimeout(() => window.location.href = 'admin.html', 800);
+    }
+  } catch(e) {
+    console.error('Login error:', e);
+    showFormMsg('loginMsg', 'Ошибка входа', 'error');
   }
 }
 
-function handleRegister(e) {
+async function handleRegister(e) {
   e.preventDefault();
   const nickname = document.getElementById('regNick').value.trim();
   const password = document.getElementById('regPass').value;
   const confirm = document.getElementById('regConfirm').value;
-  
-  // Проверка на уникальность (case-insensitive)
-  const users = JSON.parse(localStorage.getItem('ms_users') || '{}');
-  const existingNick = Object.keys(users).find(n => n.toLowerCase() === nickname.toLowerCase());
-  
-  if (existingNick) {
-    showFormMsg('regMsg', 'Ник "' + existingNick + '" уже занят', 'error');
-    return;
-  }
   
   if (nickname.toLowerCase() === 'admin') {
     showFormMsg('regMsg', 'Этот ник зарезервирован', 'error');
@@ -239,19 +221,36 @@ function handleRegister(e) {
     return;
   }
   
-  users[nickname] = password;
-  localStorage.setItem('ms_users', JSON.stringify(users));
-  localStorage.setItem('ms_current', nickname);
-  broadcastUpdate('users', { action: 'register', user: nickname });
-  playSuccess();
-  updateUserUI();
-  closeAuth();
-  showToast('Регистрация успешна! Привет, ' + nickname + '!');
+  try {
+    const usersSnapshot = await db.collection('users').get();
+    const existingNick = usersSnapshot.docs.find(doc => 
+      doc.id.toLowerCase() === nickname.toLowerCase()
+    );
+    
+    if (existingNick) {
+      showFormMsg('regMsg', 'Ник "' + existingNick.id + '" уже занят', 'error');
+      return;
+    }
+    
+    await db.collection('users').doc(nickname).set({
+      password: password,
+      role: 'player',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    
+    localStorage.setItem('ms_current', nickname);
+    playSuccess();
+    updateUserUI();
+    closeAuth();
+    showToast('Регистрация успешна! Привет, ' + nickname + '!');
+  } catch(e) {
+    console.error('Register error:', e);
+    showFormMsg('regMsg', 'Ошибка регистрации', 'error');
+  }
 }
 
 function logout() {
   localStorage.removeItem('ms_current');
-  broadcastUpdate('users', { action: 'logout' });
   updateUserUI();
   showToast('Вы вышли из аккаунта');
   playClick();
@@ -286,7 +285,9 @@ function updateUserUI() {
   updateSupportFab();
 }
 
-// ===== ЧАТ ПОДДЕРЖКИ (для игрока) =====
+// ===== FIREBASE: ЧАТ ПОДДЕРЖКИ (для игрока) =====
+let supportListener = null;
+
 function openSupport() {
   const user = localStorage.getItem('ms_current');
   if (!user) { openAuth(); showToast('Сначала войди в аккаунт'); return; }
@@ -294,35 +295,49 @@ function openSupport() {
   
   const modal = document.getElementById('supportModal');
   if (modal) modal.classList.add('active');
-  loadPlayerChat();
+  listenToPlayerChat();
   playClick();
 }
 
 function closeSupport() {
   const modal = document.getElementById('supportModal');
   if (modal) modal.classList.remove('active');
+  if (supportListener) {
+    supportListener();
+    supportListener = null;
+  }
 }
 
-function loadPlayerChat() {
+function listenToPlayerChat() {
   const user = localStorage.getItem('ms_current');
   if (!user) return;
   
-  const chats = JSON.parse(localStorage.getItem('ms_support') || '[]');
-  let chat = chats.find(c => c.user === user);
+  if (supportListener) supportListener();
   
-  if (!chat) {
-    chat = { id: Date.now(), user, messages: [] };
-    chats.push(chat);
-    localStorage.setItem('ms_support', JSON.stringify(chats));
-  }
-  
+  supportListener = db.collection('support')
+    .where('user', '==', user)
+    .onSnapshot(snapshot => {
+      if (snapshot.empty) {
+        db.collection('support').add({
+          user: user,
+          messages: [],
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } else {
+        const chat = snapshot.docs[0];
+        renderPlayerChat(chat.data().messages || []);
+      }
+    });
+}
+
+function renderPlayerChat(messages) {
   const box = document.getElementById('playerMessages');
   if (!box) return;
   
-  if (chat.messages.length === 0) {
+  if (messages.length === 0) {
     box.innerHTML = '<div class="support-empty">Напиши свой вопрос — админ ответит в ближайшее время</div>';
   } else {
-    box.innerHTML = chat.messages.map(m => `
+    box.innerHTML = messages.map(m => `
       <div class="msg ${m.from === 'admin' ? 'msg-admin' : 'msg-user'}">
         <div class="msg-author">${m.from === 'admin' ? '🛡️ Поддержка' : '👤 Ты'}</div>
         <div class="msg-text">${escapeHtml(m.text)}</div>
@@ -333,7 +348,7 @@ function loadPlayerChat() {
   }
 }
 
-function sendPlayerMessage(e) {
+async function sendPlayerMessage(e) {
   e.preventDefault();
   const user = localStorage.getItem('ms_current');
   if (!user) return;
@@ -342,22 +357,40 @@ function sendPlayerMessage(e) {
   const text = input.value.trim();
   if (!text) return;
   
-  const chats = JSON.parse(localStorage.getItem('ms_support') || '[]');
-  let chat = chats.find(c => c.user === user);
-  
-  if (!chat) {
-    chat = { id: Date.now(), user, messages: [] };
-    chats.push(chat);
+  try {
+    const snapshot = await db.collection('support').where('user', '==', user).get();
+    
+    if (snapshot.empty) {
+      await db.collection('support').add({
+        user: user,
+        messages: [{
+          from: user,
+          text: text,
+          time: Date.now(),
+          read: false
+        }],
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } else {
+      const chatDoc = snapshot.docs[0];
+      const chatData = chatDoc.data();
+      const messages = chatData.messages || [];
+      messages.push({
+        from: user,
+        text: text,
+        time: Date.now(),
+        read: false
+      });
+      await chatDoc.ref.update({ messages: messages });
+    }
+    
+    input.value = '';
+    playSuccess();
+    showToast('Сообщение отправлено');
+  } catch(e) {
+    console.error('Send message error:', e);
+    showToast('Ошибка отправки');
   }
-  
-  chat.messages.push({ from: user, text, time: Date.now(), read: false });
-  localStorage.setItem('ms_support', JSON.stringify(chats));
-  broadcastUpdate('support', { user, message: text });
-  
-  input.value = '';
-  loadPlayerChat();
-  playSuccess();
-  showToast('Сообщение отправлено');
 }
 
 function updateSupportFab() {
@@ -371,19 +404,26 @@ function updateSupportFab() {
   }
   
   fab.style.display = 'flex';
-  const chats = JSON.parse(localStorage.getItem('ms_support') || '[]');
-  const chat = chats.find(c => c.user === user);
-  const unread = chat ? chat.messages.filter(m => m.from === 'admin' && !m.read).length : 0;
-  const badge = fab.querySelector('.fab-badge');
   
-  if (badge) {
-    if (unread > 0) {
-      badge.style.display = 'flex';
-      badge.textContent = unread;
-    } else {
-      badge.style.display = 'none';
-    }
-  }
+  db.collection('support')
+    .where('user', '==', user)
+    .onSnapshot(snapshot => {
+      if (!snapshot.empty) {
+        const chat = snapshot.docs[0].data();
+        const messages = chat.messages || [];
+        const unread = messages.filter(m => m.from === 'admin' && !m.read).length;
+        const badge = fab.querySelector('.fab-badge');
+        
+        if (badge) {
+          if (unread > 0) {
+            badge.style.display = 'flex';
+            badge.textContent = unread;
+          } else {
+            badge.style.display = 'none';
+          }
+        }
+      }
+    });
 }
 
 function escapeHtml(str) {
@@ -448,14 +488,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     observer.observe(el);
   });
-  
-  // Автообновление чата игрока
-  setInterval(() => {
-    if (document.getElementById('supportModal')?.classList.contains('active')) {
-      loadPlayerChat();
-    }
-    updateSupportFab();
-  }, 3000);
 });
 
 document.addEventListener('click', e => {
