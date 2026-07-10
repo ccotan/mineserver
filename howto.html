@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Как начать играть — MineServer</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo"><span class="logo-dot"></span>MineServer</a>
+    <nav class="nav-links">
+      <a href="index.html">Главная</a>
+      <a href="modes.html">Режимы</a>
+      <a href="rules.html">Правила</a>
+      <a href="donate.html">Донат</a>
+      <a href="howto.html">Как играть</a>
+      <a href="contacts.html">Контакты</a>
+    </nav>
+    <a href="howto.html" class="nav-cta">Начать игру</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <h1>Как начать <span>играть</span></h1>
+    <p>Всего 4 простых шага — и ты уже на сервере</p>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Установи Minecraft</h3>
+        <p>Тебе понадобится Minecraft Java Edition версии 26.1.2. Купить игру можно на официальном сайте minecraft.net.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Запусти игру</h3>
+        <p>Открой лаунчер, выбери версию 26.1.2 в установках и нажми «Играть». Убедись, что используешь лицензионный аккаунт.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Добавь сервер</h3>
+        <p>В главном меню выбери «Сетевая игра» → «Добавить сервер». В поле «Адрес сервера» введи: <b>play.mineserver.ru</b></p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3>Зарегистрируйся</h3>
+        <p>При первом входе введи в чат: <code style="background: var(--bg-2); padding: 2px 6px; border-radius: 4px;">/register пароль пароль</code>. Готово!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container" style="text-align: center;">
+    <h2 style="margin-bottom: 20px;">IP-адрес сервера</h2>
+    <div class="ip-box" onclick="copyIP(this)" data-ip="play.mineserver.ru">
+      <span>play.mineserver.ru</span>
+      <span class="copy">скопировать</span>
+    </div>
+    <div class="hero-actions">
+      <a href="modes.html" class="btn btn-primary">Выбрать режим</a>
+      <a href="rules.html" class="btn btn-secondary">Прочитать правила</a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-title">
+      <h2>Полезные команды</h2>
+      <p>Базовые команды, которые пригодятся сразу</p>
+    </div>
+    <div class="grid-4">
+      <div class="card">
+        <h3>/spawn</h3>
+        <p>Телепорт на главную площадь сервера</p>
+      </div>
+      <div class="card">
+        <h3>/warp</h3>
+        <p>Список всех публичных точек телепортации</p>
+      </div>
+      <div class="card">
+        <h3>/msg ник сообщение</h3>
+        <p>Личное сообщение другому игроку</p>
+      </div>
+      <div class="card">
+        <h3>/help</h3>
+        <p>Полный список доступных команд</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container footer-row">
+    <div>© 2026 MineServer. Не связан с Mojang AB.</div>
+    <div class="footer-links">
+      <a href="rules.html">Правила</a>
+      <a href="donate.html">Донат</a>
+      <a href="contacts.html">Discord</a>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
