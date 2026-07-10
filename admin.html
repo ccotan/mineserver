@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Админ-панель — MineServer</title>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -42,7 +40,6 @@
       <div class="admin-tab" data-tab="passwords" onclick="switchAdminTab('passwords')">🔐 Смена паролей</div>
     </div>
 
-    <!-- Вкладка: Чат поддержки -->
     <div class="admin-panel" id="panel-support">
       <div class="support-layout">
         <div class="support-list" id="supportList">
@@ -61,7 +58,6 @@
       </div>
     </div>
 
-    <!-- Вкладка: Игроки -->
     <div class="admin-panel" id="panel-users" style="display:none">
       <div class="section-title">
         <h2>Зарегистрированные игроки</h2>
@@ -82,7 +78,6 @@
       </div>
     </div>
 
-    <!-- Вкладка: Смена паролей -->
     <div class="admin-panel" id="panel-passwords" style="display:none">
       <div class="section-title">
         <h2>Сброс паролей</h2>
@@ -126,15 +121,18 @@
 </footer>
 
 <button class="scroll-top" title="Наверх">↑</button>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script src="script.js"></script>
 <script>
-// Защита: только админ
 if (!isAdmin()) {
   showToast('Доступ запрещён');
   setTimeout(() => window.location.href = 'index.html', 1200);
 }
 
 let currentChatId = null;
+let supportListListener = null;
 
 function switchAdminTab(tab) {
   document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
@@ -142,48 +140,60 @@ function switchAdminTab(tab) {
   document.querySelectorAll('.admin-panel').forEach(p => p.style.display = 'none');
   document.getElementById('panel-' + tab).style.display = 'block';
   playClick();
-  if (tab === 'support') loadSupportList();
+  if (tab === 'support') listenToSupportList();
   if (tab === 'users') loadUsersTable();
   if (tab === 'passwords') loadResetSelect();
 }
 
-// ===== ЧАТ ПОДДЕРЖКИ =====
-function loadSupportList() {
-  const chats = JSON.parse(localStorage.getItem('ms_support') || '[]');
-  const list = document.getElementById('supportList');
-  if (chats.length === 0) {
-    list.innerHTML = '<div class="support-empty">Нет обращений</div>';
-    return;
-  }
-  list.innerHTML = chats.map(c => {
-    const lastMsg = c.messages[c.messages.length - 1];
-    const unread = c.messages.filter(m => m.from !== 'admin' && !m.read).length;
-    return `
-      <div class="support-item ${currentChatId === c.id ? 'active' : ''}" onclick="openChat(${c.id})">
-        <div class="support-item-top">
-          <b>${escapeHtml(c.user)}</b>
-          ${unread > 0 ? `<span class="support-badge">${unread}</span>` : ''}
+function listenToSupportList() {
+  if (supportListListener) supportListListener();
+  
+  supportListListener = db.collection('support').onSnapshot(snapshot => {
+    const list = document.getElementById('supportList');
+    if (snapshot.empty) {
+      list.innerHTML = '<div class="support-empty">Нет обращений</div>';
+      return;
+    }
+    
+    const chats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    list.innerHTML = chats.map(c => {
+      const messages = c.messages || [];
+      const lastMsg = messages[messages.length - 1];
+      const unread = messages.filter(m => m.from !== 'admin' && !m.read).length;
+      return `
+        <div class="support-item ${currentChatId === c.id ? 'active' : ''}" onclick="openChat('${c.id}')">
+          <div class="support-item-top">
+            <b>${escapeHtml(c.user)}</b>
+            ${unread > 0 ? `<span class="support-badge">${unread}</span>` : ''}
+          </div>
+          <div class="support-item-preview">${lastMsg ? escapeHtml(lastMsg.text.substring(0, 40)) + '...' : 'Нет сообщений'}</div>
+          <div class="support-item-time">${lastMsg ? formatTime(lastMsg.time) : ''}</div>
         </div>
-        <div class="support-item-preview">${escapeHtml(lastMsg.text.substring(0, 40))}...</div>
-        <div class="support-item-time">${formatTime(lastMsg.time)}</div>
-      </div>
-    `;
-  }).join('');
+      `;
+    }).join('');
+  });
 }
 
-function openChat(id) {
-  currentChatId = id;
-  const chats = JSON.parse(localStorage.getItem('ms_support') || '[]');
-  const chat = chats.find(c => c.id === id);
-  if (!chat) return;
+function openChat(chatId) {
+  currentChatId = chatId;
   
-  chat.messages.forEach(m => { if (m.from !== 'admin') m.read = true; });
-  localStorage.setItem('ms_support', JSON.stringify(chats));
-
-  document.getElementById('chatHeader').innerHTML = `💬 Обращение от <b>${escapeHtml(chat.user)}</b>`;
-  document.getElementById('replyForm').style.display = 'flex';
-  renderMessages(chat.messages);
-  loadSupportList();
+  db.collection('support').doc(chatId).onSnapshot(doc => {
+    if (!doc.exists) return;
+    const chat = doc.data();
+    
+    document.getElementById('chatHeader').innerHTML = `💬 Обращение от <b>${escapeHtml(chat.user)}</b>`;
+    document.getElementById('replyForm').style.display = 'flex';
+    renderMessages(chat.messages || []);
+    
+    const messages = chat.messages || [];
+    const needsUpdate = messages.some(m => m.from !== 'admin' && !m.read);
+    if (needsUpdate) {
+      messages.forEach(m => { if (m.from !== 'admin') m.read = true; });
+      doc.ref.update({ messages: messages });
+    }
+  });
+  
+  listenToSupportList();
   playClick();
 }
 
@@ -199,48 +209,64 @@ function renderMessages(messages) {
   box.scrollTop = box.scrollHeight;
 }
 
-function sendAdminReply(e) {
+async function sendAdminReply(e) {
   e.preventDefault();
   if (!currentChatId) return;
+  
   const input = document.getElementById('replyInput');
   const text = input.value.trim();
   if (!text) return;
   
-  const chats = JSON.parse(localStorage.getItem('ms_support') || '[]');
-  const chat = chats.find(c => c.id === currentChatId);
-  if (!chat) return;
-  
-  chat.messages.push({ from: 'admin', text, time: Date.now(), read: false });
-  localStorage.setItem('ms_support', JSON.stringify(chats));
-  broadcastUpdate('support', { chatId: currentChatId, message: text });
-  
-  input.value = '';
-  renderMessages(chat.messages);
-  playSuccess();
-  showToast('Ответ отправлен');
+  try {
+    const doc = await db.collection('support').doc(currentChatId).get();
+    const chat = doc.data();
+    const messages = chat.messages || [];
+    
+    messages.push({
+      from: 'admin',
+      text: text,
+      time: Date.now(),
+      read: false
+    });
+    
+    await doc.ref.update({ messages: messages });
+    input.value = '';
+    playSuccess();
+    showToast('Ответ отправлен');
+  } catch(e) {
+    console.error('Send reply error:', e);
+    showToast('Ошибка отправки');
+  }
 }
 
-// ===== СПИСОК ИГРОКОВ =====
-function loadUsersTable() {
-  const users = JSON.parse(localStorage.getItem('ms_users') || '{}');
-  const chats = JSON.parse(localStorage.getItem('ms_support') || '[]');
-  const tbody = document.getElementById('usersTableBody');
-  const nicks = Object.keys(users);
-  document.getElementById('usersCount').textContent = 'Всего: ' + nicks.length;
-  tbody.innerHTML = nicks.map(nick => {
-    const count = chats.filter(c => c.user === nick).length;
-    const role = nick === 'admin' ? '👑 Админ' : '👤 Игрок';
-    return `
-      <tr>
-        <td><b>${escapeHtml(nick)}</b></td>
-        <td>${role}</td>
-        <td>${count}</td>
-        <td>
-          ${nick !== 'admin' ? `<button class="btn btn-secondary" style="padding:6px 12px; font-size:13px" onclick="quickReset('${escapeHtml(nick)}')">Сменить пароль</button>` : '—'}
-        </td>
-      </tr>
-    `;
-  }).join('');
+async function loadUsersTable() {
+  try {
+    const snapshot = await db.collection('users').get();
+    const supportSnapshot = await db.collection('support').get();
+    
+    const tbody = document.getElementById('usersTableBody');
+    const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const chats = supportSnapshot.docs.map(doc => doc.data());
+    
+    document.getElementById('usersCount').textContent = 'Всего: ' + users.length;
+    
+    tbody.innerHTML = users.map(user => {
+      const count = chats.filter(c => c.user === user.id).length;
+      const role = user.id === 'admin' ? '👑 Админ' : '👤 Игрок';
+      return `
+        <tr>
+          <td><b>${escapeHtml(user.id)}</b></td>
+          <td>${role}</td>
+          <td>${count}</td>
+          <td>
+            ${user.id !== 'admin' ? `<button class="btn btn-secondary" style="padding:6px 12px; font-size:13px" onclick="quickReset('${escapeHtml(user.id)}')">Сменить пароль</button>` : '—'}
+          </td>
+        </tr>
+      `;
+    }).join('');
+  } catch(e) {
+    console.error('Load users error:', e);
+  }
 }
 
 function quickReset(nick) {
@@ -250,16 +276,23 @@ function quickReset(nick) {
   }, 100);
 }
 
-// ===== СБРОС ПАРОЛЕЙ =====
-function loadResetSelect() {
-  const users = JSON.parse(localStorage.getItem('ms_users') || '{}');
-  const select = document.getElementById('resetUserSelect');
-  const current = select.value;
-  select.innerHTML = '<option value="">— выберите игрока —</option>';
-  Object.keys(users).filter(n => n !== 'admin').forEach(nick => {
-    select.innerHTML += `<option value="${escapeHtml(nick)}">${escapeHtml(nick)}</option>`;
-  });
-  select.value = current;
+async function loadResetSelect() {
+  try {
+    const snapshot = await db.collection('users').get();
+    const select = document.getElementById('resetUserSelect');
+    const current = select.value;
+    
+    select.innerHTML = '<option value="">— выберите игрока —</option>';
+    snapshot.docs.forEach(doc => {
+      if (doc.id !== 'admin') {
+        select.innerHTML += `<option value="${escapeHtml(doc.id)}">${escapeHtml(doc.id)}</option>`;
+      }
+    });
+    
+    select.value = current;
+  } catch(e) {
+    console.error('Load select error:', e);
+  }
 }
 
 function generatePassword() {
@@ -271,26 +304,26 @@ function generatePassword() {
   playClick();
 }
 
-function resetPassword() {
+async function resetPassword() {
   const nick = document.getElementById('resetUserSelect').value;
   const newPass = document.getElementById('newPassword').value;
   const confirm = document.getElementById('confirmNewPassword').value;
-  const msg = document.getElementById('resetMsg');
 
   if (!nick) { showFormMsg('resetMsg', 'Выберите игрока', 'error'); return; }
   if (newPass.length < 4) { showFormMsg('resetMsg', 'Пароль минимум 4 символа', 'error'); return; }
   if (newPass !== confirm) { showFormMsg('resetMsg', 'Пароли не совпадают', 'error'); return; }
 
-  const users = JSON.parse(localStorage.getItem('ms_users') || '{}');
-  if (!users[nick]) { showFormMsg('resetMsg', 'Игрок не найден', 'error'); return; }
-
-  users[nick] = newPass;
-  localStorage.setItem('ms_users', JSON.stringify(users));
-  showFormMsg('resetMsg', '✓ Пароль для ' + nick + ' успешно изменён', 'success');
-  document.getElementById('newPassword').value = '';
-  document.getElementById('confirmNewPassword').value = '';
-  playSuccess();
-  showToast('Пароль изменён');
+  try {
+    await db.collection('users').doc(nick).update({ password: newPass });
+    showFormMsg('resetMsg', '✓ Пароль для ' + nick + ' успешно изменён', 'success');
+    document.getElementById('newPassword').value = '';
+    document.getElementById('confirmNewPassword').value = '';
+    playSuccess();
+    showToast('Пароль изменён');
+  } catch(e) {
+    console.error('Reset password error:', e);
+    showFormMsg('resetMsg', 'Ошибка смены пароля', 'error');
+  }
 }
 
 function showFormMsg(id, text, type) {
@@ -299,19 +332,6 @@ function showFormMsg(id, text, type) {
   el.className = 'form-message ' + type;
   setTimeout(() => { el.className = 'form-message'; }, 4000);
 }
-
-// Автообновление чата каждые 3 секунды
-setInterval(() => {
-  if (currentChatId && document.getElementById('panel-support').style.display !== 'none') {
-    const chats = JSON.parse(localStorage.getItem('ms_support') || '[]');
-    const chat = chats.find(c => c.id === currentChatId);
-    if (chat) renderMessages(chat.messages);
-    loadSupportList();
-  }
-}, 3000);
-
-// Инициализация
-loadSupportList();
 </script>
 </body>
 </html>
