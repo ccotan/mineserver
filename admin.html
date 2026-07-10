@@ -174,7 +174,7 @@ function openChat(id) {
   const chats = JSON.parse(localStorage.getItem('ms_support') || '[]');
   const chat = chats.find(c => c.id === id);
   if (!chat) return;
-  // Помечаем как прочитанное
+  
   chat.messages.forEach(m => { if (m.from !== 'admin') m.read = true; });
   localStorage.setItem('ms_support', JSON.stringify(chats));
 
@@ -203,11 +203,15 @@ function sendAdminReply(e) {
   const input = document.getElementById('replyInput');
   const text = input.value.trim();
   if (!text) return;
+  
   const chats = JSON.parse(localStorage.getItem('ms_support') || '[]');
   const chat = chats.find(c => c.id === currentChatId);
   if (!chat) return;
+  
   chat.messages.push({ from: 'admin', text, time: Date.now(), read: false });
   localStorage.setItem('ms_support', JSON.stringify(chats));
+  broadcastUpdate('support', { chatId: currentChatId, message: text });
+  
   input.value = '';
   renderMessages(chat.messages);
   playSuccess();
@@ -292,20 +296,6 @@ function showFormMsg(id, text, type) {
   el.textContent = text;
   el.className = 'form-message ' + type;
   setTimeout(() => { el.className = 'form-message'; }, 4000);
-}
-
-function escapeHtml(str) {
-  return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
-}
-
-function formatTime(ts) {
-  const d = new Date(ts);
-  const now = new Date();
-  const diff = (now - d) / 1000;
-  if (diff < 60) return 'только что';
-  if (diff < 3600) return Math.floor(diff/60) + ' мин назад';
-  if (diff < 86400) return Math.floor(diff/3600) + ' ч назад';
-  return d.toLocaleDateString('ru-RU');
 }
 
 // Автообновление чата каждые 3 секунды
