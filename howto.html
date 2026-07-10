@@ -19,7 +19,10 @@
       <a href="howto.html">Как играть</a>
       <a href="contacts.html">Контакты</a>
     </nav>
-    <a href="howto.html" class="nav-cta">Начать игру</a>
+    <div class="nav-right">
+      <button class="nav-cta" id="authBtn" onclick="openAuth()">Войти</button>
+      <div class="user-badge" id="userBadge" style="display:none"></div>
+    </div>
   </div>
 </header>
 
@@ -33,26 +36,10 @@
 <section>
   <div class="container">
     <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <h3>Установи Minecraft</h3>
-        <p>Тебе понадобится Minecraft Java Edition версии 26.1.2. Купить игру можно на официальном сайте minecraft.net.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <h3>Запусти игру</h3>
-        <p>Открой лаунчер, выбери версию 26.1.2 в установках и нажми «Играть». Убедись, что используешь лицензионный аккаунт.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <h3>Добавь сервер</h3>
-        <p>В главном меню выбери «Сетевая игра» → «Добавить сервер». В поле «Адрес сервера» введи: <b>play.mineserver.ru</b></p>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <h3>Зарегистрируйся</h3>
-        <p>При первом входе введи в чат: <code style="background: var(--bg-2); padding: 2px 6px; border-radius: 4px;">/register пароль пароль</code>. Готово!</p>
-      </div>
+      <div class="step"><div class="step-num">1</div><h3>Установи Minecraft</h3><p>Понадобится Java Edition версии 26.1.2.</p></div>
+      <div class="step"><div class="step-num">2</div><h3>Запусти игру</h3><p>Выбери версию 26.1.2 в установках лаунчера.</p></div>
+      <div class="step"><div class="step-num">3</div><h3>Добавь сервер</h3><p>В «Сетевая игра» → «Добавить сервер» → адрес: <b>play.mineserver.ru</b></p></div>
+      <div class="step"><div class="step-num">4</div><h3>Зарегистрируйся</h3><p>При первом входе: <code style="background: var(--bg-2); padding: 2px 6px; border-radius: 4px;">/register пароль пароль</code></p></div>
     </div>
   </div>
 </section>
@@ -73,27 +60,12 @@
 
 <section>
   <div class="container">
-    <div class="section-title">
-      <h2>Полезные команды</h2>
-      <p>Базовые команды, которые пригодятся сразу</p>
-    </div>
+    <div class="section-title"><h2>Полезные команды</h2><p>Базовые команды, которые пригодятся сразу</p></div>
     <div class="grid-4">
-      <div class="card">
-        <h3>/spawn</h3>
-        <p>Телепорт на главную площадь сервера</p>
-      </div>
-      <div class="card">
-        <h3>/warp</h3>
-        <p>Список всех публичных точек телепортации</p>
-      </div>
-      <div class="card">
-        <h3>/msg ник сообщение</h3>
-        <p>Личное сообщение другому игроку</p>
-      </div>
-      <div class="card">
-        <h3>/help</h3>
-        <p>Полный список доступных команд</p>
-      </div>
+      <div class="card"><h3>/spawn</h3><p>Телепорт на главную площадь</p></div>
+      <div class="card"><h3>/warp</h3><p>Список публичных точек</p></div>
+      <div class="card"><h3>/msg ник сообщение</h3><p>Личное сообщение</p></div>
+      <div class="card"><h3>/help</h3><p>Полный список команд</p></div>
     </div>
   </div>
 </section>
@@ -109,6 +81,32 @@
   </div>
 </footer>
 
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAuth()">✕</button>
+    <h2>Добро пожаловать</h2>
+    <p>Войди или зарегистрируйся</p>
+    <div class="modal-tabs">
+      <div class="modal-tab active" data-tab="login" onclick="switchTab('login')">Вход</div>
+      <div class="modal-tab" data-tab="register" onclick="switchTab('register')">Регистрация</div>
+    </div>
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group"><label>Никнейм</label><input type="text" id="loginNick" required></div>
+      <div class="form-group"><label>Пароль</label><input type="password" id="loginPass" required></div>
+      <button type="submit" class="btn btn-primary" style="width:100%">Войти</button>
+      <div class="form-message" id="loginMsg"></div>
+    </form>
+    <form id="registerForm" style="display:none" onsubmit="handleRegister(event)">
+      <div class="form-group"><label>Никнейм</label><input type="text" id="regNick" required></div>
+      <div class="form-group"><label>Пароль</label><input type="password" id="regPass" required></div>
+      <div class="form-group"><label>Повторите пароль</label><input type="password" id="regConfirm" required></div>
+      <button type="submit" class="btn btn-primary" style="width:100%">Создать аккаунт</button>
+      <div class="form-message" id="regMsg"></div>
+    </form>
+  </div>
+</div>
+
+<button class="scroll-top" title="Наверх">↑</button>
 <script src="script.js"></script>
 </body>
 </html>
