@@ -1,4 +1,3 @@
-// ===== FIREBASE =====
 const firebaseConfig = {
   apiKey: "AIzaSyBX496oLlIFMD36SvyOl5zczX8d3vbvWEU",
   authDomain: "mineserver-bb0c6.firebaseapp.com",
@@ -12,9 +11,8 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-const EMOJI_LIST = ['👤','🎮','️','🛡️','','👑','🐺','','🦁','','🦅','🐲','💀','🤖','👾','','🎲','❄️','','🌙','☀️','🍀','💎','','🗡️','🏰','🌳','🌊','','🎨','📚','','🎸','🎧','🎬','📷','','🔥','⭐',''];
+const EMOJI_LIST = ['👤','🎮','⚔️','🛡️','','👑','','🦁','🦅','','💀','🤖','👾','🎯','🎲','❄️','🔥','🌙','☀️','🍀','💎','🔮','🗡️','🏰','🌳','🌊','🎭','','📚','🎸','','🎬','📷','⭐','🌟','💫','🎪','🎯','🎰','🎳'];
 
-// ===== ЗАЩИТА =====
 document.addEventListener('copy', e => {
   if (['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
   e.preventDefault(); showToast('Копирование запрещено');
@@ -38,7 +36,6 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// ===== КЛИК =====
 document.addEventListener('click', e => {
   const ripple = document.createElement('div');
   ripple.className = 'ripple';
@@ -48,7 +45,6 @@ document.addEventListener('click', e => {
   setTimeout(() => ripple.remove(), 600);
 });
 
-// ===== КОПИРОВАНИЕ IP =====
 function copyIP(el) {
   const ip = el.dataset.ip || 'play.reished.ru';
   navigator.clipboard.writeText(ip).then(() => {
@@ -59,7 +55,6 @@ function copyIP(el) {
   });
 }
 
-// ===== TOAST =====
 function showToast(msg) {
   let toast = document.querySelector('.toast');
   if (!toast) { toast = document.createElement('div'); toast.className = 'toast'; document.body.appendChild(toast); }
@@ -69,7 +64,6 @@ function showToast(msg) {
   toast._t = setTimeout(() => toast.classList.remove('show'), 2000);
 }
 
-// ===== АДМИН =====
 async function ensureAdmin() {
   try {
     const adminDoc = await db.collection('users').doc('admin').get();
@@ -87,7 +81,6 @@ async function ensureAdmin() {
 }
 function isAdmin() { return localStorage.getItem('ms_current') === 'admin'; }
 
-// ===== АВТОРИЗАЦИЯ =====
 function openAuth() {
   const modal = document.getElementById('authModal');
   if (modal) modal.classList.add('active');
@@ -185,7 +178,6 @@ function updateUserUI() {
   updateSupportFab();
 }
 
-// ===== ПРОФИЛЬ =====
 function openProfile() {
   const user = localStorage.getItem('ms_current');
   if (!user) { openAuth(); return; }
@@ -288,7 +280,6 @@ async function saveProfile() {
   } catch(e) { console.error('Save profile error:', e); showToast('Ошибка сохранения'); }
 }
 
-// ===== ДРУЗЬЯ =====
 function openFriends() {
   const user = localStorage.getItem('ms_current');
   if (!user) { openAuth(); return; }
@@ -313,7 +304,7 @@ async function loadFriends(nickname) {
     const items = await Promise.all(friends.map(async friendNick => {
       try {
         const friendDoc = await db.collection('profiles').doc(friendNick).get();
-        const friend = friendDoc.exists ? friendDoc.data() : { nickname: friendNick, avatar: '👤', status: 'offline' };
+        const friend = friendDoc.exists ? friendDoc.data() : { nickname: friendNick, avatar: '', status: 'offline' };
         return `
           <div class="friend-item">
             <div class="friend-avatar">${friend.avatar}</div>
@@ -428,7 +419,6 @@ function viewProfile(nickname) {
   loadProfile(nickname);
 }
 
-// ===== ЛИЧНЫЕ СООБЩЕНИЯ =====
 let privateChatListener = null;
 function openChat(friendNick) {
   closeFriends();
@@ -488,7 +478,6 @@ async function sendPrivateMessage(e) {
   } catch(e) { console.error('Send private message error:', e); showToast('Ошибка отправки'); }
 }
 
-// ===== ПОДДЕРЖКА =====
 let supportListener = null;
 function openSupport() {
   const user = localStorage.getItem('ms_current');
