@@ -62,4 +62,82 @@
           <li>Приоритетный вход</li>
           <li>Эксклюзивные частицы</li>
         </ul>
-        <button class="btn btn-primary" onclick="
+        <button class="btn btn-primary" onclick="buyDonate('Premium')">Купить</button>
+      </div>
+      <div class="tier">
+        <h3>Legend</h3>
+        <p style="color: var(--muted); font-size: 14px;">Максимум возможностей</p>
+        <div class="tier-price">699 ₽</div>
+        <ul>
+          <li>Всё из Premium</li>
+          <li>10 домов (/sethome)</li>
+          <li>/feed и /heal без лимита</li>
+          <li>/enderchest где угодно</li>
+          <li>Уникальный префикс [LEGEND]</li>
+          <li>Кастомный плащ</li>
+          <li>Доступ в закрытый канал</li>
+        </ul>
+        <button class="btn btn-secondary" onclick="buyDonate('Legend')">Купить</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-title"><h2>Часто задаваемые вопросы</h2></div>
+    <div class="grid-3">
+      <div class="card"><h3>Как получить привилегию?</h3><p>После оплаты активируется автоматически в течение 5 минут.</p></div>
+      <div class="card"><h3>Это pay-to-win?</h3><p>Нет. Привилегии дают только удобство и косметику.</p></div>
+      <div class="card"><h3>Можно ли вернуть деньги?</h3><p>В течение 24 часов — да, если привилегия не использовалась.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container footer-row">
+    <div>© 2026 MineServer. Не связан с Mojang AB.</div>
+    <div class="footer-links">
+      <a href="rules.html">Правила</a>
+      <a href="donate.html">Донат</a>
+      <a href="contacts.html">Discord</a>
+    </div>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAuth()">✕</button>
+    <h2>Добро пожаловать</h2>
+    <p>Войди или зарегистрируйся</p>
+    <div class="modal-tabs">
+      <div class="modal-tab active" data-tab="login" onclick="switchTab('login')">Вход</div>
+      <div class="modal-tab" data-tab="register" onclick="switchTab('register')">Регистрация</div>
+    </div>
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group"><label>Никнейм</label><input type="text" id="loginNick" required></div>
+      <div class="form-group"><label>Пароль</label><input type="password" id="loginPass" required></div>
+      <button type="submit" class="btn btn-primary" style="width:100%">Войти</button>
+      <div class="form-message" id="loginMsg"></div>
+    </form>
+    <form id="registerForm" style="display:none" onsubmit="handleRegister(event)">
+      <div class="form-group"><label>Никнейм</label><input type="text" id="regNick" required></div>
+      <div class="form-group"><label>Пароль</label><input type="password" id="regPass" required></div>
+      <div class="form-group"><label>Повторите пароль</label><input type="password" id="regConfirm" required></div>
+      <button type="submit" class="btn btn-primary" style="width:100%">Создать аккаунт</button>
+      <div class="form-message" id="regMsg"></div>
+    </form>
+  </div>
+</div>
+
+<button class="scroll-top" title="Наверх">↑</button>
+<script src="script.js"></script>
+<script>
+function buyDonate(tier) {
+  const user = localStorage.getItem('ms_current');
+  if (!user) { openAuth(); showToast('Сначала войди в аккаунт'); return; }
+  showToast('Покупка ' + tier + ' для ' + user);
+}
+</script>
+</body>
+</html>
