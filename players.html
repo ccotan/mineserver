@@ -41,11 +41,9 @@
       <h2>Все игроки</h2>
       <p id="playersCount">Загрузка...</p>
     </div>
-    
     <div class="search-box" style="max-width: 600px; margin: 0 auto 40px;">
       <input type="text" id="searchPlayers" placeholder="Поиск по нику..." style="width: 100%; padding: 14px 20px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 15px;">
     </div>
-    
     <div class="players-grid" id="playersList">
       <div style="text-align: center; color: var(--muted); padding: 40px;">Загрузка игроков...</div>
     </div>
@@ -63,60 +61,30 @@
   </div>
 </footer>
 
-<button class="support-fab" id="supportFab" onclick="openSupport()" style="display:none" title="Поддержка">
-  <span class="fab-badge" style="display:none">0</span>
-</button>
-
+<button class="support-fab" id="supportFab" onclick="openSupport()" style="display:none" title="Поддержка"><span class="fab-badge" style="display:none">0</span></button>
 <button class="support-fab" id="friendsFab" onclick="openFriends()" style="display:none; left: 100px;" title="Друзья"></button>
 
-<!-- Профиль -->
 <div class="modal-overlay" id="profileModal">
   <div class="modal" style="max-width: 500px;">
     <button class="modal-close" onclick="closeProfile()">✕</button>
-    <div class="profile-header">
-      <div class="profile-header-bg" id="profileBg"></div>
-      <div class="profile-avatar-big" id="profileAvatar"></div>
-    </div>
-    <div style="text-align:center; margin-top: -30px;">
-      <h3 id="profileNickname">Никнейм</h3>
-      <p id="profileStatus" class="profile-status offline">Оффлайн</p>
-    </div>
+    <div class="profile-header"><div class="profile-header-bg" id="profileBg"></div><div class="profile-avatar-big" id="profileAvatar"></div></div>
+    <div style="text-align:center; margin-top: -30px;"><h3 id="profileNickname">Никнейм</h3><p id="profileStatus" class="profile-status offline">Оффлайн</p></div>
     <p id="profileDescription" style="text-align:center; color: var(--muted); margin: 16px 0 24px;">Нет описания</p>
-    
     <div id="editSection" style="display:none;">
-      <div class="form-group">
-        <label>Выбери аватар</label>
-        <input type="text" id="editAvatar" maxlength="2" placeholder="" style="text-align:center; font-size: 24px;">
-        <div class="emoji-picker" id="emojiPicker"></div>
-      </div>
-      <div class="form-group">
-        <label>Описание</label>
-        <input type="text" id="editDescription" maxlength="100" placeholder="Расскажи о себе">
-      </div>
-      <div class="form-group">
-        <label>Фон профиля</label>
-        <div class="background-upload">
-          <input type="file" id="backgroundFile" accept="image/*" onchange="handleBackgroundUpload(event)" style="flex:1;">
-          <button type="button" class="btn btn-secondary" onclick="removeBackground()">Убрать</button>
-        </div>
-        <div class="background-preview" id="backgroundPreview"></div>
-        <input type="hidden" id="backgroundData">
-      </div>
+      <div class="form-group"><label>Выбери аватар</label><input type="text" id="editAvatar" maxlength="2" style="text-align:center; font-size: 24px;"><div class="emoji-picker" id="emojiPicker"></div></div>
+      <div class="form-group"><label>Описание</label><input type="text" id="editDescription" maxlength="100" placeholder="Расскажи о себе"></div>
+      <div class="form-group"><label>Фон профиля</label><div class="background-upload"><input type="file" id="backgroundFile" accept="image/*" onchange="handleBackgroundUpload(event)" style="flex:1;"><button type="button" class="btn btn-secondary" onclick="removeBackground()">Убрать</button></div><div class="background-preview" id="backgroundPreview"></div><input type="hidden" id="backgroundData"></div>
       <button class="btn btn-primary" style="width:100%" onclick="saveProfile()">Сохранить</button>
     </div>
-    
     <div id="friendActions" style="display:none;"></div>
   </div>
 </div>
 
-<!-- Друзья -->
 <div class="modal-overlay" id="friendsModal">
   <div class="modal" style="max-width: 500px;">
     <button class="modal-close" onclick="closeFriends()">✕</button>
     <h2>Друзья</h2>
-    <div class="form-group" style="margin-top: 16px;">
-      <input type="text" id="searchInput" placeholder="Поиск по нику..." onkeyup="if(event.key==='Enter') searchUsers()">
-    </div>
+    <div class="form-group" style="margin-top: 16px;"><input type="text" id="searchInput" placeholder="Поиск по нику..." onkeyup="if(event.key==='Enter') searchUsers()"></div>
     <button class="btn btn-secondary" style="width:100%; margin-bottom: 16px;" onclick="searchUsers()">Найти</button>
     <div id="searchResults" style="max-height: 200px; overflow-y: auto; margin-bottom: 16px;"></div>
     <h3 style="margin-bottom: 12px;">Мои друзья</h3>
@@ -124,56 +92,31 @@
   </div>
 </div>
 
-<!-- Личные сообщения -->
 <div class="modal-overlay" id="privateChatModal">
   <div class="modal support-modal-content">
     <button class="modal-close" onclick="closePrivateChat()">✕</button>
     <h2>Чат с <span id="chatWith"></span></h2>
     <div class="support-player-messages" id="privateMessages"></div>
-    <form class="support-player-form" onsubmit="sendPrivateMessage(event)">
-      <input type="text" id="privateInput" placeholder="Напиши сообщение..." required>
-      <button type="submit" class="btn btn-primary">Отправить</button>
-    </form>
+    <form class="support-player-form" onsubmit="sendPrivateMessage(event)"><input type="text" id="privateInput" placeholder="Напиши сообщение..." required><button type="submit" class="btn btn-primary">Отправить</button></form>
   </div>
 </div>
 
-<!-- Поддержка -->
 <div class="modal-overlay" id="supportModal">
   <div class="modal support-modal-content">
-    <button class="modal-close" onclick="closeSupport()">✕</button>
-    <h2>Поддержка</h2>
-    <p>Опиши проблему — админ ответит в ближайшее время</p>
+    <button class="modal-close" onclick="closeSupport()"></button>
+    <h2>Поддержка</h2><p>Опиши проблему — админ ответит в ближайшее время</p>
     <div class="support-player-messages" id="playerMessages"></div>
-    <form class="support-player-form" onsubmit="sendPlayerMessage(event)">
-      <input type="text" id="playerInput" placeholder="Напиши сообщение..." required>
-      <button type="submit" class="btn btn-primary">Отправить</button>
-    </form>
+    <form class="support-player-form" onsubmit="sendPlayerMessage(event)"><input type="text" id="playerInput" placeholder="Напиши сообщение..." required><button type="submit" class="btn btn-primary">Отправить</button></form>
   </div>
 </div>
 
-<!-- Авторизация -->
 <div class="modal-overlay" id="authModal">
   <div class="modal">
     <button class="modal-close" onclick="closeAuth()">✕</button>
-    <h2>Добро пожаловать</h2>
-    <p>Войди или зарегистрируйся</p>
-    <div class="modal-tabs">
-      <div class="modal-tab active" data-tab="login" onclick="switchTab('login')">Вход</div>
-      <div class="modal-tab" data-tab="register" onclick="switchTab('register')">Регистрация</div>
-    </div>
-    <form id="loginForm" onsubmit="handleLogin(event)">
-      <div class="form-group"><label>Никнейм</label><input type="text" id="loginNick" required></div>
-      <div class="form-group"><label>Пароль</label><input type="password" id="loginPass" required></div>
-      <button type="submit" class="btn btn-primary" style="width:100%">Войти</button>
-      <div class="form-message" id="loginMsg"></div>
-    </form>
-    <form id="registerForm" style="display:none" onsubmit="handleRegister(event)">
-      <div class="form-group"><label>Никнейм (мин. 3 символа)</label><input type="text" id="regNick" required></div>
-      <div class="form-group"><label>Пароль (мин. 4 символа)</label><input type="password" id="regPass" required></div>
-      <div class="form-group"><label>Повторите пароль</label><input type="password" id="regConfirm" required></div>
-      <button type="submit" class="btn btn-primary" style="width:100%">Создать аккаунт</button>
-      <div class="form-message" id="regMsg"></div>
-    </form>
+    <h2>Добро пожаловать</h2><p>Войди или зарегистрируйся</p>
+    <div class="modal-tabs"><div class="modal-tab active" data-tab="login" onclick="switchTab('login')">Вход</div><div class="modal-tab" data-tab="register" onclick="switchTab('register')">Регистрация</div></div>
+    <form id="loginForm" onsubmit="handleLogin(event)"><div class="form-group"><label>Никнейм</label><input type="text" id="loginNick" required></div><div class="form-group"><label>Пароль</label><input type="password" id="loginPass" required></div><button type="submit" class="btn btn-primary" style="width:100%">Войти</button><div class="form-message" id="loginMsg"></div></form>
+    <form id="registerForm" style="display:none" onsubmit="handleRegister(event)"><div class="form-group"><label>Никнейм (мин. 3 символа)</label><input type="text" id="regNick" required></div><div class="form-group"><label>Пароль (мин. 4 символа)</label><input type="password" id="regPass" required></div><div class="form-group"><label>Повторите пароль</label><input type="password" id="regConfirm" required></div><button type="submit" class="btn btn-primary" style="width:100%">Создать аккаунт</button><div class="form-message" id="regMsg"></div></form>
   </div>
 </div>
 
@@ -183,16 +126,12 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script src="script.js"></script>
 <script>
-// ===== СПЕЦИАЛЬНЫЙ СКРИПТ ДЛЯ СТРАНИЦЫ ИГРОКОВ =====
 let allPlayers = [];
-let currentViewingPlayer = null;
 
-// Загрузка всех игроков
 async function loadAllPlayers() {
   try {
     const snapshot = await db.collection('profiles').get();
     allPlayers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    // Сортировка: онлайн сначала, потом по алфавиту
     allPlayers.sort((a, b) => {
       if (a.status === 'online' && b.status !== 'online') return -1;
       if (a.status !== 'online' && b.status === 'online') return 1;
@@ -206,32 +145,27 @@ async function loadAllPlayers() {
   }
 }
 
-// Отображение игроков
 function renderPlayers(players) {
   const container = document.getElementById('playersList');
   if (players.length === 0) {
     container.innerHTML = '<div style="text-align: center; color: var(--muted); padding: 40px;">Игроки не найдены</div>';
     return;
   }
-  
   container.innerHTML = players.map(player => {
     const isOnline = player.status === 'online';
     const hasBackground = player.background ? `style="background-image: url(${player.background})"` : '';
     const avatar = player.avatar || '👤';
-    
     return `
       <div class="player-card" onclick="viewPlayerProfile('${player.nickname}')">
         <div class="player-banner" ${hasBackground}></div>
         <div class="player-avatar">${avatar}</div>
         <div class="player-info">
           <div class="player-nick">${escapeHtml(player.nickname)}</div>
-          <div class="player-status ${isOnline ? 'online' : 'offline'}">
-            ${isOnline ? '🟢 Онлайн' : '⚫ Оффлайн'}
-          </div>
+          <div class="player-status ${isOnline ? 'online' : 'offline'}">${isOnline ? 'Онлайн' : 'Оффлайн'}</div>
           <div class="player-desc">${player.description ? escapeHtml(player.description.substring(0, 50)) + (player.description.length > 50 ? '...' : '') : 'Нет описания'}</div>
         </div>
         <div class="player-actions" onclick="event.stopPropagation()">
-          <button class="btn btn-primary" style="padding: 8px 16px; font-size: 13px;" onclick="addFriendFromList('${player.nickname}')">Добавить</button>
+          <button class="btn btn-primary" style="padding: 8px 16px; font-size: 13px;" onclick="addFriendFromList(event, '${player.nickname}')">Добавить</button>
           <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 13px;" onclick="openChat('${player.nickname}')">Чат</button>
         </div>
       </div>
@@ -239,13 +173,9 @@ function renderPlayers(players) {
   }).join('');
 }
 
-// Поиск игроков
 document.getElementById('searchPlayers')?.addEventListener('input', (e) => {
   const query = e.target.value.toLowerCase();
-  if (!query) {
-    renderPlayers(allPlayers);
-    return;
-  }
+  if (!query) { renderPlayers(allPlayers); return; }
   const filtered = allPlayers.filter(p => 
     p.nickname.toLowerCase().includes(query) || 
     (p.description && p.description.toLowerCase().includes(query))
@@ -253,63 +183,35 @@ document.getElementById('searchPlayers')?.addEventListener('input', (e) => {
   renderPlayers(filtered);
 });
 
-// Просмотр профиля игрока
 async function viewPlayerProfile(nickname) {
-  currentViewingPlayer = nickname;
   const modal = document.getElementById('profileModal');
   if (modal) modal.classList.add('active');
   await loadProfile(nickname);
 }
 
-// Добавление в друзья из списка
-async function addFriendFromList(friendNick) {
+async function addFriendFromList(e, friendNick) {
+  e.stopPropagation();
   const user = localStorage.getItem('ms_current');
   if (!user) { openAuth(); showToast('Сначала войди в аккаунт'); return; }
   if (user === friendNick) { showToast('Нельзя добавить себя'); return; }
-  
   try {
     const friendDoc = await db.collection('profiles').doc(friendNick).get();
     if (!friendDoc.exists) { showToast('Пользователь не найден'); return; }
-    
     const userDoc = await db.collection('profiles').doc(user).get();
     const friends = userDoc.data().friends || [];
-    
-    if (friends.includes(friendNick)) { 
-      showToast('Уже в друзьях'); 
-      return; 
-    }
-    
+    if (friends.includes(friendNick)) { showToast('Уже в друзьях'); return; }
     friends.push(friendNick);
     await db.collection('profiles').doc(user).update({ friends });
     showToast(friendNick + ' добавлен в друзья');
-    
-    // Обновить отображение
-    const btn = event.target;
+    const btn = e.target;
     btn.textContent = 'В друзьях';
     btn.disabled = true;
     btn.classList.remove('btn-primary');
     btn.classList.add('btn-secondary');
-  } catch(e) { 
-    console.error('Add friend error:', e); 
-    showToast('Ошибка добавления'); 
-  }
+  } catch(e) { console.error('Add friend error:', e); showToast('Ошибка добавления'); }
 }
 
-// Открытие чата
-function openChat(friendNick) {
-  const user = localStorage.getItem('ms_current');
-  if (!user) { openAuth(); showToast('Сначала войди в аккаунт'); return; }
-  
-  const modal = document.getElementById('privateChatModal');
-  if (modal) modal.classList.add('active');
-  document.getElementById('chatWith').textContent = friendNick;
-  listenToPrivateChat(friendNick);
-}
-
-// Загрузка страницы
-document.addEventListener('DOMContentLoaded', () => {
-  loadAllPlayers();
-});
+document.addEventListener('DOMContentLoaded', () => { loadAllPlayers(); });
 </script>
 </body>
 </html>
