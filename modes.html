@@ -19,7 +19,10 @@
       <a href="howto.html">Как играть</a>
       <a href="contacts.html">Контакты</a>
     </nav>
-    <a href="howto.html" class="nav-cta">Начать игру</a>
+    <div class="nav-right">
+      <button class="nav-cta" id="authBtn" onclick="openAuth()">Войти</button>
+      <div class="user-badge" id="userBadge" style="display:none"></div>
+    </div>
   </div>
 </header>
 
@@ -34,39 +37,45 @@
   <div class="container">
     <div class="grid-3">
       <div class="card">
+        <img class="card-image" src="https://images.unsplash.com/photo-1500964757637-c85e8a162699?w=600" alt="">
         <div class="card-icon">🌳</div>
         <h3>Выживание</h3>
-        <p>Классический ванильный режим с приватом территорий, экономикой и кланами. Идеально для тех, кто любит строить и развиваться в уютной атмосфере.</p>
+        <p>Классический ванильный режим с приватом территорий, экономикой и кланами.</p>
         <p style="margin-top: 14px; color: var(--accent-2);">👥 64 онлайн · 🗺️ 30k × 30k</p>
       </div>
       <div class="card">
+        <img class="card-image" src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600" alt="">
         <div class="card-icon">🏝️</div>
         <h3>SkyBlock</h3>
-        <p>Развивай свой маленький остров в небе, выполняй уникальные челленджи, открывай новые генераторы и соревнуйся с другими в рейтинге.</p>
+        <p>Развивай свой маленький остров в небе и соревнуйся в рейтинге.</p>
         <p style="margin-top: 14px; color: var(--accent-2);">👥 38 онлайн · ⭐ 120 островов</p>
       </div>
       <div class="card">
+        <img class="card-image" src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600" alt="">
         <div class="card-icon">⚔️</div>
         <h3>Анархия</h3>
-        <p>Никаких правил, никаких приватов, никакой защиты. Только ты, твои навыки и бескрайний мир. Хардкор для опытных игроков.</p>
+        <p>Никаких правил, никаких приватов. Только ты и бескрайний мир.</p>
         <p style="margin-top: 14px; color: var(--accent-2);">👥 26 онлайн · 💀 Без правил</p>
       </div>
       <div class="card">
+        <img class="card-image" src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=600" alt="">
         <div class="card-icon">🏰</div>
         <h3>RPG</h3>
-        <p>Кастомные квесты, уникальные классы, прокачка навыков и эпические боссы. Полноценная RPG внутри Minecraft.</p>
+        <p>Кастомные квесты, уникальные классы и эпические боссы.</p>
         <p style="margin-top: 14px; color: var(--accent-2);">👥 42 онлайн · 📜 150+ квестов</p>
       </div>
       <div class="card">
+        <img class="card-image" src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=600" alt="">
         <div class="card-icon">🎯</div>
         <h3>Мини-игры</h3>
-        <p>BedWars, SkyWars, BuildBattle и другие — быстрые партии для весёлой компании. Новые игры каждый месяц.</p>
+        <p>BedWars, SkyWars, BuildBattle и другие — быстрые партии.</p>
         <p style="margin-top: 14px; color: var(--accent-2);">👥 58 онлайн · 🎲 12 игр</p>
       </div>
       <div class="card">
+        <img class="card-image" src="https://images.unsplash.com/photo-1587573089734-599a5787a2c6?w=600" alt="">
         <div class="card-icon">🔧</div>
         <h3>Креатив</h3>
-        <p>Безлимитные ресурсы, WorldEdit и огромный участок для твоих построек. Идеально для архитекторов и строителей.</p>
+        <p>Безлимитные ресурсы, WorldEdit и огромный участок для построек.</p>
         <p style="margin-top: 14px; color: var(--accent-2);">👥 18 онлайн · 🏗️ Plot 256×256</p>
       </div>
     </div>
@@ -95,6 +104,24 @@
   </div>
 </footer>
 
-<script src="script.js"></script>
-</body>
-</html>
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAuth()">✕</button>
+    <h2>Добро пожаловать</h2>
+    <p>Войди или зарегистрируйся</p>
+    <div class="modal-tabs">
+      <div class="modal-tab active" data-tab="login" onclick="switchTab('login')">Вход</div>
+      <div class="modal-tab" data-tab="register" onclick="switchTab('register')">Регистрация</div>
+    </div>
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group"><label>Никнейм</label><input type="text" id="loginNick" required></div>
+      <div class="form-group"><label>Пароль</label><input type="password" id="loginPass" required></div>
+      <button type="submit" class="btn btn-primary" style="width:100%">Войти</button>
+      <div class="form-message" id="loginMsg"></div>
+    </form>
+    <form id="registerForm" style="display:none" onsubmit="handleRegister(event)">
+      <div class="form-group"><label>Никнейм</label><input type="text" id="regNick" required></div>
+      <div class="form-group"><label>Пароль</label><input type="password" id="regPass" required></div>
+      <div class="form-group"><label>Повторите пароль</label><input type="password" id="regConfirm" required></div>
+      <button type="submit" class="btn btn-primary" style="width:100%">Создать аккаунт</button>
+      <div class="form-message" id="regMsg
