@@ -56,7 +56,6 @@ document.addEventListener('click', e => {
 // ===== КОПИРОВАНИЕ IP =====
 function copyIP(el) {
   const ip = el.dataset.ip || 'play.mineserver.ru';
-  const textEl = el.querySelector('.copy') || el;
   navigator.clipboard.writeText(ip).then(() => {
     playSuccess();
     el.classList.add('copied');
@@ -81,6 +80,20 @@ function showToast(msg) {
   toast.classList.add('show');
   clearTimeout(toast._t);
   toast._t = setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+// ===== АВТО-СОЗДАНИЕ АДМИНА =====
+function ensureAdmin() {
+  const users = JSON.parse(localStorage.getItem('ms_users') || '{}');
+  if (!users.admin) {
+    users.admin = 'admin123';
+    localStorage.setItem('ms_users', JSON.stringify(users));
+  }
+}
+
+// ===== ПРОВЕРКА АДМИНА =====
+function isAdmin() {
+  return localStorage.getItem('ms_current') === 'admin';
 }
 
 // ===== МОДАЛКА АВТОРИЗАЦИИ =====
@@ -116,12 +129,20 @@ function handleLogin(e) {
   updateUserUI();
   closeAuth();
   showToast('Добро пожаловать, ' + nickname + '!');
+  // Если админ — редирект в админку
+  if (nickname === 'admin') {
+    setTimeout(() => window.location.href = 'admin.html', 800);
+  }
 }
 function handleRegister(e) {
   e.preventDefault();
   const nickname = document.getElementById('regNick').value.trim();
   const password = document.getElementById('regPass').value;
   const confirm = document.getElementById('regConfirm').value;
+  if (nickname.toLowerCase() === 'admin') {
+    showFormMsg('regMsg', 'Этот ник зарезервирован', 'error');
+    return;
+  }
   if (nickname.length < 3) { showFormMsg('regMsg', 'Ник минимум 3 символа', 'error'); return; }
   if (password.length < 4) { showFormMsg('regMsg', 'Пароль минимум 4 символа', 'error'); return; }
   if (password !== confirm) { showFormMsg('regMsg', 'Пароли не совпадают', 'error'); return; }
@@ -143,6 +164,7 @@ function logout() {
 }
 function showFormMsg(id, text, type) {
   const el = document.getElementById(id);
+  if (!el) return;
   el.textContent = text;
   el.className = 'form-message ' + type;
   setTimeout(() => { el.className = 'form-message'; }, 3000);
@@ -151,14 +173,102 @@ function updateUserUI() {
   const current = localStorage.getItem('ms_current');
   const authBtn = document.getElementById('authBtn');
   const userBadge = document.getElementById('userBadge');
+  const adminLink = document.getElementById('adminLink');
   if (current) {
-    authBtn.style.display = 'none';
-    userBadge.style.display = 'flex';
-    userBadge.innerHTML = `<span>👤</span><span>${current}</span><span style="cursor:pointer;margin-left:4px" onclick="logout()" title="Выйти">✕</span>`;
+    if (authBtn) authBtn.style.display = 'none';
+    if (userBadge) {
+      userBadge.style.display = 'flex';
+      userBadge.innerHTML = `<span>${current === 'admin' ? '👑' : '👤'}</span><span>${current}</span><span style="cursor:pointer;margin-left:4px" onclick="logout()" title="Выйти">✕</span>`;
+    }
+    if (adminLink) adminLink.style.display = current === 'admin' ? 'inline-block' : 'none';
   } else {
-    authBtn.style.display = 'inline-block';
-    userBadge.style.display = 'none';
+    if (authBtn) authBtn.style.display = 'inline-block';
+    if (userBadge) userBadge.style.display = 'none';
+    if (adminLink) adminLink.style.display = 'none';
   }
+  updateSupportFab();
+}
+
+// ===== ЧАТ ПОДДЕРЖКИ (для игрока) =====
+function openSupport() {
+  const user = localStorage.getItem('ms_current');
+  if (!user) { openAuth(); showToast('Сначала войди в аккаунт'); return; }
+  if (user === 'admin') { window.location.href = 'admin.html'; return; }
+  document.getElementById('supportModal').classList.add('active');
+  loadPlayerChat();
+  playClick();
+}
+function closeSupport() {
+  document.getElementById('supportModal').classList.remove('active');
+}
+function loadPlayerChat() {
+  const user = localStorage.getItem('ms_current');
+  const chats = JSON.parse(localStorage.getItem('ms_support') || '[]');
+  let chat = chats.find(c => c.user === user);
+  if (!chat) {
+    chat = { id: Date.now(), user, messages: [] };
+    chats.push(chat);
+    localStorage.setItem('ms_support', JSON.stringify(chats));
+  }
+  const box = document.getElementById('playerMessages');
+  if (chat.messages.length === 0) {
+    box.innerHTML = '<div class="support-empty">Напиши свой вопрос — админ ответит в ближайшее время</div>';
+  } else {
+    box.innerHTML = chat.messages.map(m => `
+      <div class="msg ${m.from === 'admin' ? 'msg-admin' : 'msg-user'}">
+        <div class="msg-author">${m.from === 'admin' ? '🛡️ Поддержка' : '👤 Ты'}</div>
+        <div class="msg-text">${escapeHtml(m.text)}</div>
+        <div class="msg-time">${formatTime(m.time)}</div>
+      </div>
+    `).join('');
+    box.scrollTop = box.scrollHeight;
+  }
+}
+function sendPlayerMessage(e) {
+  e.preventDefault();
+  const user = localStorage.getItem('ms_current');
+  if (!user) return;
+  const input = document.getElementById('playerInput');
+  const text = input.value.trim();
+  if (!text) return;
+  const chats = JSON.parse(localStorage.getItem('ms_support') || '[]');
+  let chat = chats.find(c => c.user === user);
+  if (!chat) {
+    chat = { id: Date.now(), user, messages: [] };
+    chats.push(chat);
+  }
+  chat.messages.push({ from: user, text, time: Date.now(), read: false });
+  localStorage.setItem('ms_support', JSON.stringify(chats));
+  input.value = '';
+  loadPlayerChat();
+  playSuccess();
+  showToast('Сообщение отправлено');
+}
+function updateSupportFab() {
+  const fab = document.getElementById('supportFab');
+  if (!fab) return;
+  const user = localStorage.getItem('ms_current');
+  if (!user || user === 'admin') { fab.style.display = 'none'; return; }
+  fab.style.display = 'flex';
+  const chats = JSON.parse(localStorage.getItem('ms_support') || '[]');
+  const chat = chats.find(c => c.user === user);
+  const unread = chat ? chat.messages.filter(m => m.from === 'admin' && !m.read).length : 0;
+  const badge = fab.querySelector('.fab-badge');
+  if (badge) {
+    if (unread > 0) { badge.style.display = 'flex'; badge.textContent = unread; }
+    else badge.style.display = 'none';
+  }
+}
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+}
+function formatTime(ts) {
+  const d = new Date(ts);
+  const diff = (Date.now() - d) / 1000;
+  if (diff < 60) return 'только что';
+  if (diff < 3600) return Math.floor(diff/60) + ' мин назад';
+  if (diff < 86400) return Math.floor(diff/3600) + ' ч назад';
+  return d.toLocaleDateString('ru-RU');
 }
 
 // ===== АНИМИРОВАННЫЕ СЧЁТЧИКИ =====
@@ -199,6 +309,7 @@ function initActiveLink() {
 
 // ===== ИНИЦИАЛИЗАЦИЯ =====
 document.addEventListener('DOMContentLoaded', () => {
+  ensureAdmin();
   updateUserUI();
   initScrollTop();
   initActiveLink();
@@ -208,9 +319,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     observer.observe(el);
   });
+  // Автообновление чата игрока
+  setInterval(() => {
+    if (document.getElementById('supportModal')?.classList.contains('active')) {
+      loadPlayerChat();
+    }
+    updateSupportFab();
+  }, 3000);
 });
 
-// Закрытие модалки по клику вне
 document.addEventListener('click', e => {
-  if (e.target.classList.contains('modal-overlay')) closeAuth();
+  if (e.target.classList.contains('modal-overlay')) {
+    closeAuth();
+    closeSupport();
+  }
 });
