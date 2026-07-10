@@ -16,6 +16,7 @@
       <a href="modes.html">Режимы</a>
       <a href="rules.html">Правила</a>
       <a href="donate.html">Донат</a>
+      <a href="players.html">Игроки</a>
       <a href="howto.html">Как играть</a>
       <a href="contacts.html">Контакты</a>
     </nav>
@@ -49,26 +50,10 @@
       <p>Всё, что нужно для комфортной игры</p>
     </div>
     <div class="grid-4">
-      <div class="card">
-        <div class="card-icon"></div>
-        <h3>Производительность</h3>
-        <p>Стабильные 20 TPS даже при большом онлайне.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon"></div>
-        <h3>Защита</h3>
-        <p>Приват территорий и модераторы 24/7.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon"></div>
-        <h3>Режимы</h3>
-        <p>Выживание, SkyBlock, анархия и мини-игры.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon"></div>
-        <h3>Сообщество</h3>
-        <p>Активный Discord и еженедельные ивенты.</p>
-      </div>
+      <div class="card"><div class="card-icon"></div><h3>Производительность</h3><p>Стабильные 20 TPS даже при большом онлайне.</p></div>
+      <div class="card"><div class="card-icon"></div><h3>Защита</h3><p>Приват территорий и модераторы 24/7.</p></div>
+      <div class="card"><div class="card-icon"></div><h3>Режимы</h3><p>Выживание, SkyBlock, анархия и мини-игры.</p></div>
+      <div class="card"><div class="card-icon"></div><h3>Сообщество</h3><p>Активный Discord и еженедельные ивенты.</p></div>
     </div>
   </div>
 </section>
@@ -95,47 +80,21 @@
   </div>
 </footer>
 
-<button class="support-fab" id="supportFab" onclick="openSupport()" style="display:none" title="Поддержка">
-  <span class="fab-badge" style="display:none">0</span>
-</button>
-
+<button class="support-fab" id="supportFab" onclick="openSupport()" style="display:none" title="Поддержка"><span class="fab-badge" style="display:none">0</span></button>
 <button class="support-fab" id="friendsFab" onclick="openFriends()" style="display:none; left: 100px;" title="Друзья"></button>
 
 <div class="modal-overlay" id="profileModal">
   <div class="modal" style="max-width: 500px;">
-    <button class="modal-close" onclick="closeProfile()"></button>
-    <div class="profile-header">
-      <div class="profile-header-bg" id="profileBg"></div>
-      <div class="profile-avatar-big" id="profileAvatar"></div>
-    </div>
-    <div style="text-align:center; margin-top: -30px;">
-      <h3 id="profileNickname">Никнейм</h3>
-      <p id="profileStatus" class="profile-status offline">Оффлайн</p>
-    </div>
+    <button class="modal-close" onclick="closeProfile()">✕</button>
+    <div class="profile-header"><div class="profile-header-bg" id="profileBg"></div><div class="profile-avatar-big" id="profileAvatar"></div></div>
+    <div style="text-align:center; margin-top: -30px;"><h3 id="profileNickname">Никнейм</h3><p id="profileStatus" class="profile-status offline">Оффлайн</p></div>
     <p id="profileDescription" style="text-align:center; color: var(--muted); margin: 16px 0 24px;">Нет описания</p>
-    
     <div id="editSection" style="display:none;">
-      <div class="form-group">
-        <label>Выбери аватар</label>
-        <input type="text" id="editAvatar" maxlength="2" placeholder="" style="text-align:center; font-size: 24px;">
-        <div class="emoji-picker" id="emojiPicker"></div>
-      </div>
-      <div class="form-group">
-        <label>Описание</label>
-        <input type="text" id="editDescription" maxlength="100" placeholder="Расскажи о себе">
-      </div>
-      <div class="form-group">
-        <label>Фон профиля</label>
-        <div class="background-upload">
-          <input type="file" id="backgroundFile" accept="image/*" onchange="handleBackgroundUpload(event)" style="flex:1;">
-          <button type="button" class="btn btn-secondary" onclick="removeBackground()">Убрать</button>
-        </div>
-        <div class="background-preview" id="backgroundPreview"></div>
-        <input type="hidden" id="backgroundData">
-      </div>
+      <div class="form-group"><label>Выбери аватар</label><input type="text" id="editAvatar" maxlength="2" style="text-align:center; font-size: 24px;"><div class="emoji-picker" id="emojiPicker"></div></div>
+      <div class="form-group"><label>Описание</label><input type="text" id="editDescription" maxlength="100" placeholder="Расскажи о себе"></div>
+      <div class="form-group"><label>Фон профиля</label><div class="background-upload"><input type="file" id="backgroundFile" accept="image/*" onchange="handleBackgroundUpload(event)" style="flex:1;"><button type="button" class="btn btn-secondary" onclick="removeBackground()">Убрать</button></div><div class="background-preview" id="backgroundPreview"></div><input type="hidden" id="backgroundData"></div>
       <button class="btn btn-primary" style="width:100%" onclick="saveProfile()">Сохранить</button>
     </div>
-    
     <div id="friendActions" style="display:none;"></div>
   </div>
 </div>
@@ -144,9 +103,7 @@
   <div class="modal" style="max-width: 500px;">
     <button class="modal-close" onclick="closeFriends()">✕</button>
     <h2>Друзья</h2>
-    <div class="form-group" style="margin-top: 16px;">
-      <input type="text" id="searchInput" placeholder="Поиск по нику..." onkeyup="if(event.key==='Enter') searchUsers()">
-    </div>
+    <div class="form-group" style="margin-top: 16px;"><input type="text" id="searchInput" placeholder="Поиск по нику..." onkeyup="if(event.key==='Enter') searchUsers()"></div>
     <button class="btn btn-secondary" style="width:100%; margin-bottom: 16px;" onclick="searchUsers()">Найти</button>
     <div id="searchResults" style="max-height: 200px; overflow-y: auto; margin-bottom: 16px;"></div>
     <h3 style="margin-bottom: 12px;">Мои друзья</h3>
@@ -156,51 +113,29 @@
 
 <div class="modal-overlay" id="privateChatModal">
   <div class="modal support-modal-content">
-    <button class="modal-close" onclick="closePrivateChat()">✕</button>
+    <button class="modal-close" onclick="closePrivateChat()"></button>
     <h2>Чат с <span id="chatWith"></span></h2>
     <div class="support-player-messages" id="privateMessages"></div>
-    <form class="support-player-form" onsubmit="sendPrivateMessage(event)">
-      <input type="text" id="privateInput" placeholder="Напиши сообщение..." required>
-      <button type="submit" class="btn btn-primary">Отправить</button>
-    </form>
+    <form class="support-player-form" onsubmit="sendPrivateMessage(event)"><input type="text" id="privateInput" placeholder="Напиши сообщение..." required><button type="submit" class="btn btn-primary">Отправить</button></form>
   </div>
 </div>
 
 <div class="modal-overlay" id="supportModal">
   <div class="modal support-modal-content">
     <button class="modal-close" onclick="closeSupport()">✕</button>
-    <h2>Поддержка</h2>
-    <p>Опиши проблему — админ ответит в ближайшее время</p>
+    <h2>Поддержка</h2><p>Опиши проблему — админ ответит в ближайшее время</p>
     <div class="support-player-messages" id="playerMessages"></div>
-    <form class="support-player-form" onsubmit="sendPlayerMessage(event)">
-      <input type="text" id="playerInput" placeholder="Напиши сообщение..." required>
-      <button type="submit" class="btn btn-primary">Отправить</button>
-    </form>
+    <form class="support-player-form" onsubmit="sendPlayerMessage(event)"><input type="text" id="playerInput" placeholder="Напиши сообщение..." required><button type="submit" class="btn btn-primary">Отправить</button></form>
   </div>
 </div>
 
 <div class="modal-overlay" id="authModal">
   <div class="modal">
     <button class="modal-close" onclick="closeAuth()">✕</button>
-    <h2>Добро пожаловать</h2>
-    <p>Войди или зарегистрируйся</p>
-    <div class="modal-tabs">
-      <div class="modal-tab active" data-tab="login" onclick="switchTab('login')">Вход</div>
-      <div class="modal-tab" data-tab="register" onclick="switchTab('register')">Регистрация</div>
-    </div>
-    <form id="loginForm" onsubmit="handleLogin(event)">
-      <div class="form-group"><label>Никнейм</label><input type="text" id="loginNick" required></div>
-      <div class="form-group"><label>Пароль</label><input type="password" id="loginPass" required></div>
-      <button type="submit" class="btn btn-primary" style="width:100%">Войти</button>
-      <div class="form-message" id="loginMsg"></div>
-    </form>
-    <form id="registerForm" style="display:none" onsubmit="handleRegister(event)">
-      <div class="form-group"><label>Никнейм (мин. 3 символа)</label><input type="text" id="regNick" required></div>
-      <div class="form-group"><label>Пароль (мин. 4 символа)</label><input type="password" id="regPass" required></div>
-      <div class="form-group"><label>Повторите пароль</label><input type="password" id="regConfirm" required></div>
-      <button type="submit" class="btn btn-primary" style="width:100%">Создать аккаунт</button>
-      <div class="form-message" id="regMsg"></div>
-    </form>
+    <h2>Добро пожаловать</h2><p>Войди или зарегистрируйся</p>
+    <div class="modal-tabs"><div class="modal-tab active" data-tab="login" onclick="switchTab('login')">Вход</div><div class="modal-tab" data-tab="register" onclick="switchTab('register')">Регистрация</div></div>
+    <form id="loginForm" onsubmit="handleLogin(event)"><div class="form-group"><label>Никнейм</label><input type="text" id="loginNick" required></div><div class="form-group"><label>Пароль</label><input type="password" id="loginPass" required></div><button type="submit" class="btn btn-primary" style="width:100%">Войти</button><div class="form-message" id="loginMsg"></div></form>
+    <form id="registerForm" style="display:none" onsubmit="handleRegister(event)"><div class="form-group"><label>Никнейм (мин. 3 символа)</label><input type="text" id="regNick" required></div><div class="form-group"><label>Пароль (мин. 4 символа)</label><input type="password" id="regPass" required></div><div class="form-group"><label>Повторите пароль</label><input type="password" id="regConfirm" required></div><button type="submit" class="btn btn-primary" style="width:100%">Создать аккаунт</button><div class="form-message" id="regMsg"></div></form>
   </div>
 </div>
 
